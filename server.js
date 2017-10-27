@@ -19,12 +19,16 @@ module.exports = {
 		var userInfoJson = {};
 
 		request(jsonUrl, function (error, response) {
-			if (!error && response) {
-				userInfoJson = JSON.parse(response.body);
+			if (!error) {
+				try {
+					userInfoJson = JSON.parse(response.body);
+				} catch {
+					callback({ status: 500, message: "There was an error trying to make your request" });
+				}
 				userInfoJson.avatarImageURL = 'http:' + userInfoJson.avatarImageURL;
 
 				request(profileUrl, function (error, response, html) {
-					if (!error && response) {
+					if (!error) {
 						var $ = cheerio.load(html);
 						var name, image, donateURL, team, teamURL;
 
@@ -60,8 +64,12 @@ module.exports = {
 		var donationsUrl = 'http://www.extra-life.org/index.cfm?fuseaction=donorDrive.participantDonations&participantID=' + donationsId + '&format=json';
 
 		request(donationsUrl, function (error, response) {
-			if (!error && response) {
-				userDonationsJson = JSON.parse(response.body);
+			if (!error) {
+				try {
+					userDonationsJson = JSON.parse(response.body);
+				} catch {
+					callback({ status: 500, message: "There was an error trying to make your request" });
+				}
 
 				callback(userDonationsJson);
 			} else {
@@ -72,7 +80,6 @@ module.exports = {
 	},
 
 	getTeamInfo: function (id, callback) {
-
 		var teamInfoId = id;
 
 		var teamUrl = 'http://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=' + teamInfoId;
@@ -82,17 +89,22 @@ module.exports = {
 		var teamInfoJson = {};
 
 		request(teamJsonURL, function (error, response) {
-			if(error || !response) {
+			if(error) {
 				console.log('Error obtaining team info');
 				callback({ status: 500, message: "There was an error trying to make your request" });
 			}
 
-			teamInfoJson = JSON.parse(response.body);
+			try {
+				teamInfoJson = JSON.parse(response.body);
+			} catch {
+				callback({ status: 500, message: "There was an error trying to make your request" });
+			}
+			
 			teamInfoJson.avatarImageURL = 'http:' + teamInfoJson.avatarImageURL;
 			teamInfoJson.teamURL = teamUrl;
 
 			request(teamRosterUrl, function (error, response, html) {
-				if (!error && response) {
+				if (!error) {
 					var $ = cheerio.load(html);
 
 					//push array to members key for use in following each function
