@@ -24,7 +24,6 @@ module.exports = {
 				try {
 					userInfoJson = JSON.parse(response.body);
 				} catch (e) {
-					console.log(jsonUrl);
 					callback({ status: 500, message: "There was an error trying to make your request" });
 				}
 				userInfoJson.avatarImageURL = 'http:' + userInfoJson.avatarImageURL;
@@ -49,12 +48,10 @@ module.exports = {
 
 						callback(userInfoJson);
 					} else {
-						console.log('Error parsing userInfo URL');
 						callback({ status: 500, message: "There was an error trying to make your request" });
 					}
 				});
 			} else {
-				console.log('Error parsing userInfo URL');
 				callback({ status: 500, message: "There was an error trying to make your request" });
 			}
 		});
@@ -75,7 +72,6 @@ module.exports = {
 
 				callback(userDonationsJson);
 			} else {
-				console.log('Error parsing recentDonations URL');
 				callback({ status: 500, message: "There was an error trying to make your request" });
 			}
 		});
@@ -92,7 +88,6 @@ module.exports = {
 
 		request(teamJsonURL, function (error, response) {
 			if(error) {
-				console.log('Error obtaining team info');
 				callback({ status: 500, message: "There was an error trying to make your request" });
 			}
 
@@ -131,7 +126,6 @@ module.exports = {
 
 					callback(teamInfoJson);
 				} else {
-					console.log('Error parsing teamInfo URL');
 					callback({ status: 500, message: "There was an error trying to make your request" });
 				}
 			});
