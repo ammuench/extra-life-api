@@ -6,190 +6,144 @@
  */
 
 var request = require('request');
-var cheerio = require('cheerio');
+
+var extraLifeBaseUrl = 'https://www.extra-life.org/index.cfm?fuseaction=';
+var extraLifeParticipantUrl = 'donordrive.participant&participantID=';
+var jsonFormatUrl = '&format=json';
 
 module.exports = {
-	getUserInfo: function (id, callback) {
-		var profileId = id;
+  getUserInfo: function (id, callback) {
+    var profileId = id;
 
-		//generate URLs from id
-		var profileUrl = 'http://www.extra-life.org/index.cfm?fuseaction=donordrive.participant&participantID=' + profileId;
-		var jsonUrl = profileUrl + '&format=json';
+    //generate URLs from id
+    var profileUrl = extraLifeBaseUrl + extraLifeParticipantUrl + profileId + jsonFormatUrl;
 
-		//declare object for return
-		var userInfoJson = {};
+    //declare object for return
+    var userInfoJson = {};
 
-		request(jsonUrl, function (error, response) {
-			if (!error) {
-				try {
-					userInfoJson = JSON.parse(response.body);
-				} catch (e) {
-					callback({ status: 500, message: "There was an error trying to make your request" });
-				}
-				userInfoJson.avatarImageURL = 'http:' + userInfoJson.avatarImageURL;
+    request(profileUrl, function (error, response) {
+      if (!error) {
+        try {
+          userInfoJson = JSON.parse(response.body);
+        } catch (e) {
+          callback({ status: 500, message: "There was an error trying to make your request" });
+        }
 
-				request(profileUrl, function (error, response, html) {
-					if (!error) {
-						var $ = cheerio.load(html);
-						var name, image, donateURL, team, teamURL;
+        userInfoJson.avatarImageURL = 'https:' + userInfoJson.avatarImageURL;
+        userInfoJson.donateURL = extraLifeBaseUrl + extraLifeParticipantUrl + userInfoJson.participantID
 
-						$('.btn-support-card').filter(function () {
-							donateURL = $(this).attr('href');
-							userInfoJson.donateURL = donateURL;
-						});
+        callback(userInfoJson);
+      } else {
+        callback({ status: 500, message: "There was an error trying to make your request" });
+      }
+    });
+  },
 
-						$('.link-team').filter(function () {
-							var data = $(this);
-							team = data.text();
-							teamURL = 'http://www.extra-life.org/' + data.attr('href');
-							userInfoJson.teamName = team;
-							userInfoJson.teamURL = teamURL;
-						});
+  getRecentDonations: function (id, callback) {
+    var userDonationsJson = { recentDonations: [] };
+    var donationsId = id;
+    var donationsUrl = extraLifeBaseUrl +'donorDrive.participantDonations&participantID=' + donationsId + jsonFormatUrl;
 
-						callback(userInfoJson);
-					} else {
-						callback({ status: 500, message: "There was an error trying to make your request" });
-					}
-				});
-			} else {
-				callback({ status: 500, message: "There was an error trying to make your request" });
-			}
-		});
-	},
+    request(donationsUrl, function (error, response) {
+      if (!error) {
+        try {
+          userDonationsJson = JSON.parse(response.body);
+        } catch (e) {
+          callback({ status: 500, message: "There was an error trying to make your request" });
+        }
 
-	getRecentDonations: function (id, callback) {
-		var userDonationsJson = { recentDonations: [] };
-		var donationsId = id;
-		var donationsUrl = 'http://www.extra-life.org/index.cfm?fuseaction=donorDrive.participantDonations&participantID=' + donationsId + '&format=json';
+        callback(userDonationsJson);
+      } else {
+        callback({ status: 500, message: "There was an error trying to make your request" });
+      }
+    });
+  },
 
-		request(donationsUrl, function (error, response) {
-			if (!error) {
-				try {
-					userDonationsJson = JSON.parse(response.body);
-				} catch (e) {
-					callback({ status: 500, message: "There was an error trying to make your request" });
-				}
+  getTeamInfo: function (id, callback) {
+    var teamInfoId = id;
+    var teamJsonURL = extraLifeBaseUrl + 'donorDrive.team&teamID=' + teamInfoId + jsonFormatUrl;
+    var teamRosterUrl = extraLifeBaseUrl + 'donorDrive.teamParticipants&teamID=' + teamInfoId + jsonFormatUrl
+    var teamInfoJson = {};
 
-				callback(userDonationsJson);
-			} else {
-				callback({ status: 500, message: "There was an error trying to make your request" });
-			}
-		});
-	},
+    request(teamJsonURL, function (error, response) {
+      if(error) {
+        callback({ status: 500, message: "There was an error trying to make your request" });
+      }
+      try {
+        teamInfoJson = JSON.parse(response.body);
+      } catch (e) {
+        callback({ status: 500, message: "There was an error trying to make your request" });
+      }
+      teamInfoJson.avatarImageURL = 'https:' + teamInfoJson.avatarImageURL;
 
-	getTeamInfo: function (id, callback) {
-		var teamInfoId = id;
+      request(teamRosterUrl, function (error, response) {
+        if(error) {
+          callback({ status: 500, message: "There was an error trying to make your request" });
+        }
 
-		var teamUrl = 'http://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=' + teamInfoId;
-		var teamJsonURL = 'http://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=' + teamInfoId + '&format=json';
-		var teamRosterUrl = 'http://www.extra-life.org/index.cfm?fuseaction=donorDrive.teamParticipants&teamID=' + teamInfoId;
+        try {
+          teamInfoJson.members = JSON.parse(response.body);
+          callback(teamInfoJson);
+        } catch (e) {
+          callback({ status: 500, message: "There was an error trying to make your request" });
+        }
+      });
+    })
+  }
 
-		var teamInfoJson = {};
+  // getTeamDonations: function (id, callback) {
+  // 	var teamId = id;
 
-		request(teamJsonURL, function (error, response) {
-			if(error) {
-				callback({ status: 500, message: "There was an error trying to make your request" });
-			}
+  // 	var teamRosterURL = 'http://www.extra-life.org/index.cfm?fuseaction=donorDrive.teamParticipants&teamID=' + teamId + '&format=json';
 
-			try {
-				teamInfoJson = JSON.parse(response.body);
-			} catch (e) {
-				callback({ status: 500, message: "There was an error trying to make your request" });
-			}
-			
-			teamInfoJson.avatarImageURL = 'http:' + teamInfoJson.avatarImageURL;
-			teamInfoJson.teamURL = teamUrl;
+  // 	var donations = [];
 
-			request(teamRosterUrl, function (error, response, html) {
-				if (!error) {
-					var $ = cheerio.load(html);
+  // 	request(teamRosterURL, function (error, response) {
+  // 		var rosterList = JSON.parse(response.body);
+  // 		for (var i = 0, rosterLen = rosterList.length; i < rosterLen; i++) {
+  // 			var userName = rosterList[i].displayName;
+  // 			var donationUrl = 'http://www.extra-life.org/index.cfm?fuseaction=donorDrive.participantDonations&participantID=' + rosterList[i].participantID + '&format=json';
 
-					//push array to members key for use in following each function
-					teamInfoJson.members = [];
+  // 			console.log(i, rosterList.length);
 
-					$('#team tbody tr').each(function (i, elem) {
-						var data = $(this).children('td').children('a');
-						var memberObj = { name: "", isTeamCaptain: false, raised: "", URL: "", pID: "", image: "" };
-						memberObj.name = data.children('span').children('strong.block').text();
-						memberObj.name = memberObj.name.replace(/(\r\n\t|\n|\r|\t)/gm, "").trim();
-						if (memberObj.name.indexOf('Team Captain') > -1) {
-							memberObj.name = memberObj.name.split('Team Captain')[0].trim();
-							memberObj.isTeamCaptain = true;
-						}
-						memberObj.raised = parseFloat(data.children('span').children('.gray').children('small:first-child').children('strong').text().split('$')[1].replace(/,/g, ''));
-						var memberURL = data.attr('href');
-						memberObj.URL = memberURL;
-						memberObj.pID = parseInt(memberURL.split('participantID=')[1]);
-						memberObj.image = 'http:' + data.children('span').children('.member-avatar').attr('src');
-						teamInfoJson.members.push(memberObj);
-					});
+  // 			request(donationUrl, function (error, response) {
+  // 				var userDonations = JSON.parse(response.body);
+  // 				// var j = 0, donateLength = userDonations.length;
+  // 				var donationsCount = 0;
+  // 				for (var j = 0, len = userDonations.length; j < len; j++) {
+  // 					userDonations[j].donatedTo = userName;
+  // 					donations.push(userDonations[j]);
 
-					callback(teamInfoJson);
-				} else {
-					callback({ status: 500, message: "There was an error trying to make your request" });
-				}
-			});
-		})
-	}
+  // 					donationsCount = donations.length;
 
-	// getTeamDonations: function (id, callback) {
-	// 	var teamId = id;
+  // 					//Bit of a janky fix, but since we can have a TON of calls running async here,
+  // 					//we check to see if the donations length has checked every 50ms.  Once they
+  // 					//have shown to be equal, we send the callback data
+  // 					timeout = setTimeout(function () {
+  // 						if (donationsCount === donations.length) {
+  // 							console.log('they are equal')
+  // 							var sortByDate = function (a, b) {
+  // 								if (a.createdOn < b.createdOn) {
+  // 									return 1
+  // 								}
+  // 								if (a.createdOn > b.createdOn) {
+  // 									return -1
+  // 								}
+  // 								return 0;
+  // 							}
+  // 							clearTimeout
+  // 							return callback(donations.sort(sortByDate));
 
-	// 	var teamRosterURL = 'http://www.extra-life.org/index.cfm?fuseaction=donorDrive.teamParticipants&teamID=' + teamId + '&format=json';
+  // 						}else{
+  // 							console.log('notequal');
+  // 						}
+  // 					}, 500)
+  // 				}
+  // 			});
 
-	// 	var donations = [];
-
-	// 	request(teamRosterURL, function (error, response) {
-	// 		var rosterList = JSON.parse(response.body);
-	// 		for (var i = 0, rosterLen = rosterList.length; i < rosterLen; i++) {
-	// 			var userName = rosterList[i].displayName;
-	// 			var donationUrl = 'http://www.extra-life.org/index.cfm?fuseaction=donorDrive.participantDonations&participantID=' + rosterList[i].participantID + '&format=json';
-
-	// 			console.log(i, rosterList.length);
-
-	// 			request(donationUrl, function (error, response) {
-	// 				var userDonations = JSON.parse(response.body);
-	// 				// var j = 0, donateLength = userDonations.length;
-	// 				var donationsCount = 0;
-	// 				for (var j = 0, len = userDonations.length; j < len; j++) {
-	// 					userDonations[j].donatedTo = userName;
-	// 					donations.push(userDonations[j]);
-
-	// 					donationsCount = donations.length;
-
-	// 					//Bit of a janky fix, but since we can have a TON of calls running async here, 
-	// 					//we check to see if the donations length has checked every 50ms.  Once they
-	// 					//have shown to be equal, we send the callback data
-	// 					timeout = setTimeout(function () {
-	// 						if (donationsCount === donations.length) {
-	// 							console.log('they are equal')
-	// 							var sortByDate = function (a, b) {
-	// 								if (a.createdOn < b.createdOn) {
-	// 									return 1
-	// 								}
-	// 								if (a.createdOn > b.createdOn) {
-	// 									return -1
-	// 								}
-	// 								return 0;
-	// 							}
-	// 							clearTimeout
-	// 							return callback(donations.sort(sortByDate));
-							
-	// 						}else{
-	// 							console.log('notequal');
-	// 						}
-	// 					}, 500)
-	// 				}
-	// 			});
-
-	// 		}
+  // 		}
 
 
-	// 	})
-	// }
+  // 	})
+  // }
 }
-
-
-
-
-
