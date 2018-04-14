@@ -7,13 +7,12 @@
 const request = require('request');
 
 const domain = 'https://www.extra-life.org/',
-  formatJson = '&format=json',
-  pageString = '&page={1}',
-  donationsUrl = domain + 'index.cfm?fuseaction=donorDrive.participantDonations&participantID={0}' + formatJson + pageString,
-  profileUrl = domain + 'index.cfm?fuseaction=donorDrive.participant&participantID={0}' + formatJson,
-  teamDonationsUrl = domain + 'index.cfm?fuseaction=donorDrive.teamDonations&teamID={0}' + formatJson + pageString,
-  teamProfileUrl = domain + 'index.cfm?fuseaction=donorDrive.team&teamID={0}' + formatJson,
-  teamRosterUrl = domain + 'index.cfm?fuseaction=donorDrive.teamParticipants&teamID={0}' + formatJson + pageString;
+  limit = 100,
+  donationsUrl = domain + 'api/participants/{0}/donations?limit=' + limit.toString() + '&offset={1}',
+  profileUrl = domain + 'api/participants/{0}',
+  teamDonationsUrl = domain + 'api/teams/{0}/donations?limit=' + limit.toString() + '&offset={1}',
+  teamProfileUrl = domain + 'api/teams/{0}',
+  teamRosterUrl = domain + 'api/teams/{0}/participants?limit=' + limit.toString() + '&offset={1}';
 
 if (!String.format) {
   String.format = function(format) {
@@ -76,7 +75,7 @@ module.exports = {
   getRecentDonations: async (id, page) => {
     return new Promise((resolve, reject) => {
       let userDonationsJson = {};
-      let url = String.format(donationsUrl, id, (page || 1));
+      let url = String.format(donationsUrl, id, ((page > 1 ? page * limit : 1) || 1));
 
       request(url, (error, response) => {
         if (!error && response) {
@@ -145,11 +144,11 @@ module.exports = {
   getTeamDonations: async (id, page) => {
     return new Promise((resolve, reject) => {
       let teamDonationsJson = {};
-      let url = String.format(teamDonationsUrl, id, (page || 1));
+      let url = String.format(teamDonationsUrl, id, ((page > 1 ? page * limit : 1) || 1));
 
       request(url, function (error, response) {
         if (!error && response) {
-          teamDonationsJson.countDonations = response.headers['x-total-records'] || 0;
+          teamDonationsJson.countDonations = response.headers['num-records'] || 0;
           teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
           try {
             teamDonationsJson.recentDonations = JSON.parse(response.body);
@@ -174,11 +173,11 @@ module.exports = {
   getTeamRoster: async (id, page) => {
     return new Promise((resolve, reject) => {
       let teamRosterJson = {};
-      let url = String.format(teamRosterUrl, id, (page || 1));
+      let url = String.format(teamRosterUrl, id, ((page > 1 ? page * limit : 1) || 1));
 
       request(url, (error, response) => {
         if (!error && response) {
-          teamRosterJson.countMembers = response.headers['x-total-records'] || 0;
+          teamRosterJson.countMembers = response.headers['num-records'] || 0;
           teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
           try {
             teamRosterJson.recentMembers = JSON.parse(response.body);
@@ -188,7 +187,7 @@ module.exports = {
 
           for (let i = 0; i < teamRosterJson.recentMembers.length; i++) {
             teamRosterJson.recentMembers[i].avatarImageURL = 'https:' + teamRosterJson.recentMembers[i].avatarImageURL;
-            teamRosterJson.recentMembers[i].profileURL = profileUrl + teamRosterJson.recentMembers[i].participantID;
+            teamRosterJson.recentMembers[i].profileURL = domain + 'index.cfm?fuseaction=donorDrive.participants&participantID=' + teamRosterJson.recentMembers[i].participantID;
           }
 
           resolve(teamRosterJson);
