@@ -36,6 +36,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "request": "^2.88.0",
     "tslint": "^5.9.0"
   },
   "devDependencies": {

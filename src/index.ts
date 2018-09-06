@@ -1,49 +1,42 @@
 import * as request from 'request';
 
-const domain = 'https://www.extra-life.org/'
-const limit = 100
-const donationsUrl = `${domain}api/participants/{0}/donations?limit=${limit.toString()}&offset={1}`;
-const profileUrl = `${domain}api/participants/{0}`;
-const teamDonationsUrl = `${domain}api/teams/{0}/donations?limit=${limit.toString()}&offset={1}`;
-const teamProfileUrl = `${domain}api/teams/{0}`;
-const teamRosterUrl = `${domain}api/teams/{0}/participants?limit=${limit.toString()}&offset={1}`;
+import { apiPaths } from './helpers/api-paths';
 
 /**
-   * Gets the extra life info of a user
-   * @param id - the user participant ID
-   * @param team - whether to return team info or not
-   * @return result - the promise for completion of function (async)
-   */
-export const getUserInfo = async (id: string | number, team = true): Promise<any> => {
+ * Gets the extra life info of a user
+ * @param id - the user participant ID
+ * @param team - whether to return team info or not
+ * @return result - the promise for completion of function (async)
+ */
+export const getUserInfo = async (id: string | number): Promise<any> => {
     return new Promise((resolve, reject) => {
-        let url = String.format(profileUrl, id);
-        let userInfoJson = {};
+        const url = apiPaths.profileUrl(id as number);
+        let userInfoJson: any = {};
 
         request(url, (error: any, response: any) => {
             if (!error && response) {
                 try {
                     userInfoJson = JSON.parse(response.body);
-                } catch (e) {
-                    return reject(e);
-                }
-                userInfoJson.avatarImageURL = 'https:' + userInfoJson.avatarImageURL;
-                userInfoJson.donateURL = domain + 'index.cfm?fuseaction=donate.participant&participantID=' + id;
+                    userInfoJson.avatarImageURL = 'https:' + userInfoJson.avatarImageURL;
+                    userInfoJson.donateURL = `https://www.extra-life.org/index.cfm?fuseaction=donate.participant&participantID=${id}`;
 
-                if (userInfoJson.teamID && team) {
-                    module.exports.getTeamInfo(userInfoJson.teamID).then((data) => {
-                        userInfoJson.teamName = data.name;
-                        userInfoJson.teamURL = data.teamURL;
-
+                    if (userInfoJson.teamID) {
+                        getTeamInfo(userInfoJson.teamID, false)
+                            .then((data: any) => {
+                                userInfoJson.teamURL = data.teamURL;
+                                resolve(userInfoJson);
+                            }).catch((reason) => {
+                                reject(reason);
+                            });
+                    } else {
                         resolve(userInfoJson);
-                    }).catch((reason) => {
-                        return reject(reason);
-                    });
-                } else {
-                    resolve(userInfoJson);
+                    }
+                } catch (e) {
+                    reject(e);
                 }
             } else {
                 console.log('Error parsing userInfo URL');
-                return reject('There was an error trying to make your request');
+                reject('There was an error trying to make your request');
             }
         });
     });
@@ -51,29 +44,29 @@ export const getUserInfo = async (id: string | number, team = true): Promise<any
 
 /**
  * Gets the recent donations of a user
- * @param {String | Number} id - the user participant ID
- * @param {Number} page - the page number to return
- * @return {Promise} result - the promise for completion of function (async)
+ * @param id - the user participant ID
+ * @param limit - limit of amount results shown at once.  defaults to 100
+ * @param page - the page number to return
+ * @return result - the promise for completion of function (async)
  */
-export const getRecentDonations = async (id: string, page: number): Promise<any> => {
+export const getRecentDonations = async (id: string | number, limit: number = 100, page: number = 1): Promise<any> => {
     return new Promise((resolve, reject) => {
-        let userDonationsJson = {};
-        let url = String.format(donationsUrl, id, ((page > 1 ? page * limit : 1) || 1));
+        const url = apiPaths.userDonationUrl(id, 100, page);
+        const userDonationsJson: any = {};
 
         request(url, (error, response) => {
             if (!error && response) {
-                userDonationsJson.countDonations = response.headers['x-total-records'] || 0;
-                userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
                 try {
+                    userDonationsJson.countDonations = response.headers['x-total-records'] || 0;
+                    userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
                     userDonationsJson.recentDonations = JSON.parse(response.body);
+                    resolve(userDonationsJson);
                 } catch (e) {
-                    return reject(e);
+                    reject(e);
                 }
-
-                resolve(userDonationsJson);
             } else {
                 console.log('Error parsing recentDonations URL');
-                return reject('There was an error trying to make your request');
+                reject('There was an error trying to make your request');
             }
         });
     });
@@ -81,43 +74,44 @@ export const getRecentDonations = async (id: string, page: number): Promise<any>
 
 /**
  * Gets the team infomation of a specific team from extra life
- * @param {*} id - the team ID
- * @return {Promise} result - the promise for completion of function (async)
+ * @param id - the team ID
+ * @param roster - whether or not to fetch team roster
+ * @return result - the promise for completion of function (async)
  */
 
-export const getTeamInfo = async (id, roster = true) => {
+export const getTeamInfo = async (id: string | number, roster = true): Promise<any> => {
     return new Promise((resolve, reject) => {
-        let url = String.format(teamProfileUrl, id);
-        console.log(url);
-        let teamInfoJson = {};
+        const url = apiPaths.teamProfileUrl(id);
+        let teamInfoJson: any = {};
 
         request(url, (error, response) => {
             if (!error && response) {
                 try {
                     teamInfoJson = JSON.parse(response.body);
                 } catch (e) {
-                    return reject(e);
+                    reject(e);
                 }
                 teamInfoJson.avatarImageURL = 'http:' + teamInfoJson.avatarImageURL;
-                teamInfoJson.teamURL = domain + 'index.cfm?fuseaction=donorDrive.team&teamID=' + id;
+                teamInfoJson.teamURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=${id}`;
                 if (roster) {
-                    module.exports.getTeamRoster(id).then((data) => {
-                        console.log(data);
-                        teamInfoJson.members = data.recentMembers.map((u) => {
-                            u.URL = String.format(domain + 'index.cfm?fuseaction=donorDrive.participant&participantID={0}', u.participantID);
-                            return u;
-                        });
+                    getTeamRoster(id, 1000)
+                        .then((data) => {
+                            console.log(data);
+                            teamInfoJson.members = data.recentMembers.map((u: any) => {
+                                u.URL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=${u.participantID}`;
+                                return u;
+                            });
 
-                        resolve(teamInfoJson);
-                    }).catch((reason) => {
-                        return reject(reason);
-                    });
+                            resolve(teamInfoJson);
+                        }).catch((reason) => {
+                            reject(reason);
+                        });
                 } else {
                     resolve(teamInfoJson);
                 }
             } else {
                 console.log('Error obtaining team info');
-                return reject('There was an error trying to make your request');
+                reject('There was an error trying to make your request');
             }
         });
     });
@@ -125,29 +119,30 @@ export const getTeamInfo = async (id, roster = true) => {
 
 /**
  * Gets the donations made to a specific team
- * @param {String} id - the team ID
- * @param {Number} page - the page number to return
- * @return {Promise} result - the promise for completion of function (async)
+ * @param id - the team ID
+ * @param limit - limit of amount results shown at once.  defaults to 100
+ * @param page - the page number to return.  defaults to 1
+ * @return result - the promise for completion of function (async)
  */
-export const getTeamDonations = async (id: string, page: number): Promise<any> => {
+export const getTeamDonations = async (id: string | number, limit: number = 100, page: number = 1): Promise<any> => {
     return new Promise((resolve, reject) => {
-        let teamDonationsJson = {};
-        let url = String.format(teamDonationsUrl, id, ((page > 1 ? page * limit : 1) || 1));
+        const teamDonationsJson: any = {};
+        const url = apiPaths.teamDonationsUrl(id, 100, page);
 
-        request(url, function (error, response) {
+        request(url, (error, response) => {
             if (!error && response) {
                 teamDonationsJson.countDonations = response.headers['num-records'] || 0;
                 teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
                 try {
                     teamDonationsJson.recentDonations = JSON.parse(response.body);
                 } catch (e) {
-                    return reject(e);
+                    reject(e);
                 }
 
                 resolve(teamDonationsJson);
             } else {
                 console.log('Error parsing teamDonations URL');
-                return reject('There was an error trying to make your request');
+                reject('There was an error trying to make your request');
             }
         });
     });
@@ -156,13 +151,14 @@ export const getTeamDonations = async (id: string, page: number): Promise<any> =
 /**
  * Gets the team roster of a specific extra life team
  * @param id - the team ID
- * @param page - the page number to return
+ * @param limit - limit of amount results shown at once.  defaults to 100
+ * @param page - the page number to return.  defaults to 1
  * @return result - the promise for completion of function (async)
  */
-export const getTeamRoster = async (id: string, page: number): Promise<any> => {
+export const getTeamRoster = async (id: string | number, limit: number = 100, page: number = 1): Promise<any> => {
     return new Promise((resolve, reject) => {
-        let teamRosterJson = {};
-        let url = String.format(teamRosterUrl, id, ((page > 1 ? page * limit : 1) || 1));
+        const teamRosterJson: any = {};
+        const url = apiPaths.teamRosterUrl(id);
 
         request(url, (error, response) => {
             if (!error && response) {
@@ -171,18 +167,18 @@ export const getTeamRoster = async (id: string, page: number): Promise<any> => {
                 try {
                     teamRosterJson.recentMembers = JSON.parse(response.body);
                 } catch (e) {
-                    return reject(e);
+                    reject(e);
                 }
 
-                for (let i = 0; i < teamRosterJson.recentMembers.length; i++) {
-                    teamRosterJson.recentMembers[i].avatarImageURL = 'https:' + teamRosterJson.recentMembers[i].avatarImageURL;
-                    teamRosterJson.recentMembers[i].profileURL = domain + 'index.cfm?fuseaction=donorDrive.participants&participantID=' + teamRosterJson.recentMembers[i].participantID;
-                }
+                teamRosterJson.recentMembers.forEach((member: any) => {
+                    member.avatarImageURL = 'https:' + member.avatarImageURL;
+                    member.profileURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participants&participantID=${member.participantID}`;
+                });
 
                 resolve(teamRosterJson);
             } else {
                 console.log('Error parsing teamRoster URL');
-                return reject('There was an error trying to make your request');
+                reject('There was an error trying to make your request');
             }
         });
     });
