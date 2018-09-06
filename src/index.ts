@@ -97,7 +97,7 @@ export const getTeamInfo = async (id: string | number, fetchRoster = true): Prom
                     getTeamRoster(id)
                         .then((data) => {
                             console.log(data);
-                            teamInfoJson.members = data.recentMembers.map((u: any) => {
+                            teamInfoJson.members = data.members.map((u: any) => {
                                 u.URL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=${u.participantID}`;
                                 return u;
                             });
