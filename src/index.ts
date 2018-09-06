@@ -155,22 +155,22 @@ export const getTeamDonations = async (id: string | number, limit: number = 100,
  * @param page - the page number to return.  defaults to 1
  * @return result - the promise for completion of function (async)
  */
-export const getTeamRoster = async (id: string | number, limit: number = 100, page: number = 1): Promise<any> => {
+export const getTeamRoster = async (id: string | number): Promise<any> => {
     return new Promise((resolve, reject) => {
         const teamRosterJson: any = {};
         const url = apiPaths.teamRosterUrl(id);
 
         request(url, (error, response) => {
             if (!error && response) {
-                teamRosterJson.countMembers = response.headers['num-records'] || 0;
-                teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
                 try {
-                    teamRosterJson.recentMembers = JSON.parse(response.body);
+                    teamRosterJson.countMembers = response.headers['num-records'] || 0;
+                    teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
+                    teamRosterJson.members = JSON.parse(response.body);
                 } catch (e) {
                     reject(e);
                 }
 
-                teamRosterJson.recentMembers.forEach((member: any) => {
+                teamRosterJson.members.forEach((member: any) => {
                     member.avatarImageURL = 'https:' + member.avatarImageURL;
                     member.profileURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participants&participantID=${member.participantID}`;
                 });

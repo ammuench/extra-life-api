@@ -65,7 +65,7 @@ extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=**[TEAM ID HERE]**
     }
     ```
     
-* **extralifeapi.getUserDonations( participantId, limit?, page?)**
+* **getUserDonations( participantId, limit?, page?)**
   * Takes `participantId` as a parameter. `limit` and `page` are optional parameters.  Page size is equal to your `limit` value.
   * Returns information on page and count, and an array of donations, ordered from newest to oldest
   
@@ -88,7 +88,7 @@ extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=**[TEAM ID HERE]**
     }
     ```
     
-* **extralifeapi.getTeamInfo(teamId, fetchRoster?)**
+* **getTeamInfo(teamId, fetchRoster?)**
   * Takes `teamId` as a parameter and an optional `fetchRoster` boolean (defaults to TRUE)
   * Returns a promise that contains an object with the basic team info and it's full roster (if `fetchRoster` is set to TRUE)
   * Roster returns as array of user objects
@@ -125,7 +125,36 @@ extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=**[TEAM ID HERE]**
       ]
     }
     ```
-* **extralifeapi.getTeamDonations( teamId, limit, page )**
+
+* **getTeamRoster(teamId)**
+  * Takes `teamId` as a parameter
+  * Returns information on page and count and an array of team members
+  **Returned object**
+    ```javascript
+    { 
+      countMembers: 73,
+      countPages: 1,
+      members: [
+        { displayName: 'Alex Muench',
+          fundraisingGoal: 1000,
+          participantID: 320706,
+          teamName: 'Extra Life Nerds',
+          eventName: 'Extra Life 2018',
+          avatarImageURL: 'https://assets.donordrive.com/extralife/images/$avatars$/constituent_0C07ECD7-C293-34EB-45A3F7B77F8BA043.jpg',
+          createdDateUTC: '2018-09-06T20:14:48.0+0000',
+          eventID: 539,
+          sumDonations: 0,
+          teamID: 38961,
+          isTeamCaptain: false,
+          numDonations: 0,
+          profileURL: 'https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participants&participantID=320706',
+          URL: 'https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=320706'
+        }
+      ]
+    }
+    ```
+
+* **getTeamDonations( teamId, limit, page )**
   * Takes `teamId` as a parameter.  `limit` and `page` are optional parameters.  Page size is equal to your `limit` value.
   * Returns information on page and count, and an array of donations given to the team, ordered from newest to oldest
   * **NOTE** ExtraLife's API includes registrations as donations in this view.  Donations of "null" are a user signing up for a team.  Donations of 19 (assumedly) are users signing up as a Platinum User.  

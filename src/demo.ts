@@ -1,7 +1,7 @@
 import { getTeamInfo, getTeamDonations } from './index';
 import * as elAPI from './index';
 
-
+elAPI.getTeamRoster
 // elAPI.getUserDonations(318890, 100)
 //     .then((data) => {
 //         console.log(data);
