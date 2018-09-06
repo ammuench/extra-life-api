@@ -43,15 +43,15 @@ export const getUserInfo = async (id: string | number): Promise<any> => {
 };
 
 /**
- * Gets the recent donations of a user
+ * Gets a list of a user's donations
  * @param id - the user participant ID
  * @param limit - limit of amount results shown at once.  defaults to 100
  * @param page - the page number to return
  * @return result - the promise for completion of function (async)
  */
-export const getRecentDonations = async (id: string | number, limit: number = 100, page: number = 1): Promise<any> => {
+export const getUserDonations = async (id: string | number, limit: number = 0, page: number = 1): Promise<any> => {
     return new Promise((resolve, reject) => {
-        const url = apiPaths.userDonationUrl(id, 100, page);
+        const url = apiPaths.userDonationUrl(id, limit, page);
         const userDonationsJson: any = {};
 
         request(url, (error, response) => {
@@ -59,13 +59,13 @@ export const getRecentDonations = async (id: string | number, limit: number = 10
                 try {
                     userDonationsJson.countDonations = response.headers['x-total-records'] || 0;
                     userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
-                    userDonationsJson.recentDonations = JSON.parse(response.body);
+                    userDonationsJson.donations = JSON.parse(response.body);
                     resolve(userDonationsJson);
                 } catch (e) {
                     reject(e);
                 }
             } else {
-                console.log('Error parsing recentDonations URL');
+                console.log('Error parsing userDonations URL');
                 reject('There was an error trying to make your request');
             }
         });
@@ -75,11 +75,11 @@ export const getRecentDonations = async (id: string | number, limit: number = 10
 /**
  * Gets the team infomation of a specific team from extra life
  * @param id - the team ID
- * @param roster - whether or not to fetch team roster
+ * @param fetchRoster - whether or not to fetch team roster
  * @return result - the promise for completion of function (async)
  */
 
-export const getTeamInfo = async (id: string | number, roster = true): Promise<any> => {
+export const getTeamInfo = async (id: string | number, fetchRoster = true): Promise<any> => {
     return new Promise((resolve, reject) => {
         const url = apiPaths.teamProfileUrl(id);
         let teamInfoJson: any = {};
@@ -93,7 +93,7 @@ export const getTeamInfo = async (id: string | number, roster = true): Promise<a
                 }
                 teamInfoJson.avatarImageURL = 'http:' + teamInfoJson.avatarImageURL;
                 teamInfoJson.teamURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=${id}`;
-                if (roster) {
+                if (fetchRoster) {
                     getTeamRoster(id, 1000)
                         .then((data) => {
                             console.log(data);
@@ -127,14 +127,14 @@ export const getTeamInfo = async (id: string | number, roster = true): Promise<a
 export const getTeamDonations = async (id: string | number, limit: number = 100, page: number = 1): Promise<any> => {
     return new Promise((resolve, reject) => {
         const teamDonationsJson: any = {};
-        const url = apiPaths.teamDonationsUrl(id, 100, page);
+        const url = apiPaths.teamDonationsUrl(id, limit, page);
 
         request(url, (error, response) => {
             if (!error && response) {
                 teamDonationsJson.countDonations = response.headers['num-records'] || 0;
                 teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
                 try {
-                    teamDonationsJson.recentDonations = JSON.parse(response.body);
+                    teamDonationsJson.donations = JSON.parse(response.body);
                 } catch (e) {
                     reject(e);
                 }

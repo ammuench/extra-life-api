@@ -27,6 +27,7 @@
   "typings": "lib/index.d.ts",
   "scripts": {
     "clean": "rimraf lib",
+    "demo": "npm run build && node dist/demo.js",
     "lint": "tslint --force --format verbose \"src/**/*.ts\"",
     "build": "npm run clean && npm run lint && echo Using TypeScript && tsc --version && tsc --pretty",
     "test": "npm run build && mocha --compilers ts:ts-node/register --recursive 'test/**/*-spec.ts'",

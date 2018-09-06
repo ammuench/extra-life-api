@@ -10,7 +10,11 @@ const pageOffset = (limit: number, page: number): number => {
 
 export const apiPaths = {
     userDonationUrl(id: number | string, limit: number = 100, page: number = 1): string {
-        return `${DOMAIN_STUB}api/participants/${id}/donations?limit=${limit}&offset=${pageOffset(limit, page)}`;
+        if (!limit) {
+            return `${DOMAIN_STUB}api/participants/${id}/donations`;
+        } else {
+            return `${DOMAIN_STUB}api/participants/${id}/donations?limit=${limit}&offset=${pageOffset(limit, page)}`;
+        }
     },
 
     profileUrl(id: number | string): string {
@@ -18,7 +22,11 @@ export const apiPaths = {
     },
 
     teamDonationsUrl(id: number | string, limit: number = 100, page: number = 1): string {
-        return `${DOMAIN_STUB}api/teams/${id}/donations?limit=${limit}&offset=${pageOffset(limit, page)}`;
+        if (!limit) {
+            return `${DOMAIN_STUB}api/teams/${id}/donations`;
+        } else {
+            return `${DOMAIN_STUB} api / teams / ${id} /donations?limit=${limit}&offset=${pageOffset(limit, page)}`;
+        }
     },
 
     teamProfileUrl(id: number | string): string {

@@ -44,16 +44,13 @@ exports.getUserInfo = (id) => __awaiter(this, void 0, void 0, function* () {
         });
     });
 });
-exports.getRecentDonations = (id, limit = 100, page = 1) => __awaiter(this, void 0, void 0, function* () {
+exports.getUserDonations = (id, limit = 0) => __awaiter(this, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
-        const url = api_paths_1.apiPaths.userDonationUrl(id, 100, page);
-        const userDonationsJson = {};
+        const url = api_paths_1.apiPaths.userDonationUrl(id, limit);
         request(url, (error, response) => {
             if (!error && response) {
                 try {
-                    userDonationsJson.countDonations = response.headers['x-total-records'] || 0;
-                    userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
-                    userDonationsJson.recentDonations = JSON.parse(response.body);
+                    const userDonationsJson = JSON.parse(response.body);
                     resolve(userDonationsJson);
                 }
                 catch (e) {
@@ -67,7 +64,7 @@ exports.getRecentDonations = (id, limit = 100, page = 1) => __awaiter(this, void
         });
     });
 });
-exports.getTeamInfo = (id, roster = true) => __awaiter(this, void 0, void 0, function* () {
+exports.getTeamInfo = (id, fetchRoster = true) => __awaiter(this, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
         const url = api_paths_1.apiPaths.teamProfileUrl(id);
         let teamInfoJson = {};
@@ -81,7 +78,7 @@ exports.getTeamInfo = (id, roster = true) => __awaiter(this, void 0, void 0, fun
                 }
                 teamInfoJson.avatarImageURL = 'http:' + teamInfoJson.avatarImageURL;
                 teamInfoJson.teamURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=${id}`;
-                if (roster) {
+                if (fetchRoster) {
                     exports.getTeamRoster(id, 1000)
                         .then((data) => {
                         console.log(data);
@@ -108,7 +105,7 @@ exports.getTeamInfo = (id, roster = true) => __awaiter(this, void 0, void 0, fun
 exports.getTeamDonations = (id, limit = 100, page = 1) => __awaiter(this, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
         const teamDonationsJson = {};
-        const url = api_paths_1.apiPaths.teamDonationsUrl(id, 100, page);
+        const url = api_paths_1.apiPaths.teamDonationsUrl(id, limit, page);
         request(url, (error, response) => {
             if (!error && response) {
                 teamDonationsJson.countDonations = response.headers['num-records'] || 0;
