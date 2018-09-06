@@ -1,6 +1,6 @@
 {
   "name": "extra-life-api",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "A node module to integrate with the extra-life API",
   "license": "MIT",
   "repository": {
