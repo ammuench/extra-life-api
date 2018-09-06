@@ -1,21 +1,13 @@
 {
   "name": "extra-life-api",
-  "version": "2.0.2",
-  "description": "A node-based API module to get extended Extra Life info for Users and Teams!",
-  "main": "./server.js",
-  "author": "Alex Muench",
-  "dependencies": {
-    "request": "~2.61.0"
-  },
-  "scripts": {
-    "start": "node server.js",
-    "demo": "node demo.js"
-  },
-  "devDependencies": {},
+  "version": "3.0.0",
+  "description": "A node module to integrate with the extra-life API",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/ammuench/extra-life-api.git"
   },
+  "author": "Alex Muench",
   "keywords": [
     "extra",
     "life",
@@ -24,9 +16,59 @@
     "extralife",
     "extra-life"
   ],
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ammuench/extra-life-api/issues"
   },
-  "homepage": "https://github.com/ammuench/extra-life-api"
+  "homepage": "https://github.com/ammuench/extra-life-api",
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "clean": "rimraf lib",
+    "lint": "tslint --force --format verbose \"src/**/*.ts\"",
+    "build": "npm run clean && npm run lint && echo Using TypeScript && tsc --version && tsc --pretty",
+    "test": "npm run build && mocha --compilers ts:ts-node/register --recursive 'test/**/*-spec.ts'",
+    "coverage": "nyc --include='src/**/*.ts' --reporter=text --reporter=html --reporter=lcov mocha --require ts-node/register --compilers ts:ts-node/register --recursive 'test/**/*-spec.ts'",
+    "watch": "npm run build -- --watch",
+    "watch:test": "npm run test -- --watch",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "tslint": "^5.9.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.0.0",
+    "@types/mocha": "^2.0.0",
+    "@types/node": "^7.0.0",
+    "@types/request": "^2.47.1",
+    "@types/sinon": "^4.3.0",
+    "chai": "^3.0.0",
+    "coveralls": "^3.0.2",
+    "mocha": "^5.2.0",
+    "nyc": "^11.0.0",
+    "request": "^2.88.0",
+    "rimraf": "^2.0.0",
+    "sinon": "^4.4.2",
+    "ts-node": "^5.0.0",
+    "tslint": "^5.3.2",
+    "typescript": "^2.8.0"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*"
+    ],
+    "exclude": [
+      "lib"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "reporter": [],
+    "all": true
+  }
 }

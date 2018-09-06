@@ -1,0 +1,12 @@
+{
+  "extends": "tslint:latest",
+  "rules": {
+    "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
+    "no-unused-expression": false,
+    "max-line-length": false,
+    "ordered-imports": true,
+    "no-console": false,
+    "no-var-requires": false,
+    "quotemark": [true, "single"]
+  }
+}

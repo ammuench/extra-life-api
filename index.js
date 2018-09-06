@@ -103,6 +103,7 @@ module.exports = {
   getTeamInfo: async (id, roster = true) => {
     return new Promise((resolve, reject) => {
       let url = String.format(teamProfileUrl, id);
+      console.log(url);
       let teamInfoJson = {};
 
       request(url, (error, response) => {
@@ -116,6 +117,7 @@ module.exports = {
           teamInfoJson.teamURL = domain + 'index.cfm?fuseaction=donorDrive.team&teamID=' + id;
           if (roster) {
             module.exports.getTeamRoster(id).then((data) => {
+              console.log(data);
               teamInfoJson.members = data.recentMembers.map((u) => {
                 u.URL = String.format(domain + 'index.cfm?fuseaction=donorDrive.participant&participantID={0}', u.participantID);
                 return u;
