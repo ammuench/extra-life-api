@@ -44,13 +44,16 @@ exports.getUserInfo = (id) => __awaiter(this, void 0, void 0, function* () {
         });
     });
 });
-exports.getUserDonations = (id, limit = 0) => __awaiter(this, void 0, void 0, function* () {
+exports.getUserDonations = (id, limit = 0, page = 1) => __awaiter(this, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
-        const url = api_paths_1.apiPaths.userDonationUrl(id, limit);
+        const url = api_paths_1.apiPaths.userDonationUrl(id, limit, page);
+        const userDonationsJson = {};
         request(url, (error, response) => {
             if (!error && response) {
                 try {
-                    const userDonationsJson = JSON.parse(response.body);
+                    userDonationsJson.countDonations = response.headers['x-total-records'] || 0;
+                    userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
+                    userDonationsJson.donations = JSON.parse(response.body);
                     resolve(userDonationsJson);
                 }
                 catch (e) {
@@ -58,7 +61,7 @@ exports.getUserDonations = (id, limit = 0) => __awaiter(this, void 0, void 0, fu
                 }
             }
             else {
-                console.log('Error parsing recentDonations URL');
+                console.log('Error parsing userDonations URL');
                 reject('There was an error trying to make your request');
             }
         });
@@ -79,7 +82,7 @@ exports.getTeamInfo = (id, fetchRoster = true) => __awaiter(this, void 0, void 0
                 teamInfoJson.avatarImageURL = 'http:' + teamInfoJson.avatarImageURL;
                 teamInfoJson.teamURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=${id}`;
                 if (fetchRoster) {
-                    exports.getTeamRoster(id, 1000)
+                    exports.getTeamRoster(id)
                         .then((data) => {
                         console.log(data);
                         teamInfoJson.members = data.recentMembers.map((u) => {
@@ -108,10 +111,10 @@ exports.getTeamDonations = (id, limit = 100, page = 1) => __awaiter(this, void 0
         const url = api_paths_1.apiPaths.teamDonationsUrl(id, limit, page);
         request(url, (error, response) => {
             if (!error && response) {
-                teamDonationsJson.countDonations = response.headers['num-records'] || 0;
-                teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
                 try {
-                    teamDonationsJson.recentDonations = JSON.parse(response.body);
+                    teamDonationsJson.countDonations = response.headers['num-records'] || 0;
+                    teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
+                    teamDonationsJson.donations = JSON.parse(response.body);
                 }
                 catch (e) {
                     reject(e);
@@ -125,21 +128,21 @@ exports.getTeamDonations = (id, limit = 100, page = 1) => __awaiter(this, void 0
         });
     });
 });
-exports.getTeamRoster = (id, limit = 100, page = 1) => __awaiter(this, void 0, void 0, function* () {
+exports.getTeamRoster = (id) => __awaiter(this, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
         const teamRosterJson = {};
         const url = api_paths_1.apiPaths.teamRosterUrl(id);
         request(url, (error, response) => {
             if (!error && response) {
-                teamRosterJson.countMembers = response.headers['num-records'] || 0;
-                teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
                 try {
-                    teamRosterJson.recentMembers = JSON.parse(response.body);
+                    teamRosterJson.countMembers = response.headers['num-records'] || 0;
+                    teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
+                    teamRosterJson.members = JSON.parse(response.body);
                 }
                 catch (e) {
                     reject(e);
                 }
-                teamRosterJson.recentMembers.forEach((member) => {
+                teamRosterJson.members.forEach((member) => {
                     member.avatarImageURL = 'https:' + member.avatarImageURL;
                     member.profileURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participants&participantID=${member.participantID}`;
                 });

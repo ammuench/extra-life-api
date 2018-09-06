@@ -94,7 +94,7 @@ export const getTeamInfo = async (id: string | number, fetchRoster = true): Prom
                 teamInfoJson.avatarImageURL = 'http:' + teamInfoJson.avatarImageURL;
                 teamInfoJson.teamURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=${id}`;
                 if (fetchRoster) {
-                    getTeamRoster(id, 1000)
+                    getTeamRoster(id)
                         .then((data) => {
                             console.log(data);
                             teamInfoJson.members = data.recentMembers.map((u: any) => {
