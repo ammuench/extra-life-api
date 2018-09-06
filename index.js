@@ -68,7 +68,7 @@ module.exports = {
   },
   /**
    * Gets the recent donations of a user
-   * @param {*} id - the user participant ID
+   * @param {String | Number} id - the user participant ID
    * @param {Number} page - the page number to return
    * @return {Promise} result - the promise for completion of function (async)
    */

@@ -1,3 +1,13 @@
+import * as request from 'request';
+
+const domain = 'https://www.extra-life.org/'
+const limit = 100
+const donationsUrl = `${domain}api/participants/{0}/donations?limit=${limit.toString()}&offset={1}`;
+const profileUrl = `${domain}api/participants/{0}`;
+const teamDonationsUrl = `${domain}api/teams/{0}/donations?limit=${limit.toString()}&offset={1}`;
+const teamProfileUrl = `${domain}api/teams/{0}`;
+const teamRosterUrl = `${domain}api/teams/{0}/participants?limit=${limit.toString()}&offset={1}`;
+
 /**
    * Gets the extra life info of a user
    * @param id - the user participant ID
@@ -9,7 +19,7 @@ export const getUserInfo = async (id: string | number, team = true): Promise<any
         let url = String.format(profileUrl, id);
         let userInfoJson = {};
 
-        request(url, (error, response) => {
+        request(url, (error: any, response: any) => {
             if (!error && response) {
                 try {
                     userInfoJson = JSON.parse(response.body);
