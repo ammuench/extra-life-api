@@ -131,9 +131,9 @@ export const getTeamDonations = async (id: string | number, limit: number = 100,
 
         request(url, (error, response) => {
             if (!error && response) {
-                teamDonationsJson.countDonations = response.headers['num-records'] || 0;
-                teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
                 try {
+                    teamDonationsJson.countDonations = response.headers['num-records'] || 0;
+                    teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
                     teamDonationsJson.donations = JSON.parse(response.body);
                 } catch (e) {
                     reject(e);
