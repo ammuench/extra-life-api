@@ -25,7 +25,7 @@ export const apiPaths = {
         if (!limit) {
             return `${DOMAIN_STUB}api/teams/${id}/donations`;
         } else {
-            return `${DOMAIN_STUB} api / teams / ${id} /donations?limit=${limit}&offset=${pageOffset(limit, page)}`;
+            return `${DOMAIN_STUB}api/teams/${id}/donations?limit=${limit}&offset=${pageOffset(limit, page)}`;
         }
     },
 

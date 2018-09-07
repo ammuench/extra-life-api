@@ -84,7 +84,6 @@ exports.getTeamInfo = (id, fetchRoster = true) => __awaiter(this, void 0, void 0
                 if (fetchRoster) {
                     exports.getTeamRoster(id)
                         .then((data) => {
-                        console.log(data);
                         teamInfoJson.members = data.members.map((u) => {
                             u.URL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=${u.participantID}`;
                             return u;
