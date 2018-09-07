@@ -1,6 +1,9 @@
 import * as request from 'request';
 
 import { apiPaths } from './helpers/api-paths';
+import { IDonationsList, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
+
+export { IDonationsList, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
 
 /**
  * Gets the extra life info of a user
@@ -8,7 +11,7 @@ import { apiPaths } from './helpers/api-paths';
  * @param team - whether to return team info or not
  * @return result - the promise for completion of function (async)
  */
-export const getUserInfo = async (id: string | number): Promise<any> => {
+export const getUserInfo = async (id: string | number): Promise<IExtraLifeUser | any> => {
     return new Promise((resolve, reject) => {
         const url = apiPaths.profileUrl(id as number);
         let userInfoJson: any = {};
@@ -24,12 +27,12 @@ export const getUserInfo = async (id: string | number): Promise<any> => {
                         getTeamInfo(userInfoJson.teamID, false)
                             .then((data: any) => {
                                 userInfoJson.teamURL = data.teamURL;
-                                resolve(userInfoJson);
+                                resolve(userInfoJson as IExtraLifeUser);
                             }).catch((reason) => {
                                 reject(reason);
                             });
                     } else {
-                        resolve(userInfoJson);
+                        resolve(userInfoJson as IExtraLifeUser);
                     }
                 } catch (e) {
                     reject(e);
@@ -49,7 +52,7 @@ export const getUserInfo = async (id: string | number): Promise<any> => {
  * @param page - the page number to return
  * @return result - the promise for completion of function (async)
  */
-export const getUserDonations = async (id: string | number, limit: number = 0, page: number = 1): Promise<any> => {
+export const getUserDonations = async (id: string | number, limit: number = 0, page: number = 1): Promise<IDonationsList | any> => {
     return new Promise((resolve, reject) => {
         const url = apiPaths.userDonationUrl(id, limit, page);
         const userDonationsJson: any = {};
@@ -60,7 +63,7 @@ export const getUserDonations = async (id: string | number, limit: number = 0, p
                     userDonationsJson.countDonations = response.headers['x-total-records'] || 0;
                     userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
                     userDonationsJson.donations = JSON.parse(response.body);
-                    resolve(userDonationsJson);
+                    resolve(userDonationsJson as IDonationsList);
                 } catch (e) {
                     reject(e);
                 }
@@ -79,7 +82,7 @@ export const getUserDonations = async (id: string | number, limit: number = 0, p
  * @return result - the promise for completion of function (async)
  */
 
-export const getTeamInfo = async (id: string | number, fetchRoster = true): Promise<any> => {
+export const getTeamInfo = async (id: string | number, fetchRoster = true): Promise<IExtraLifeTeam | any> => {
     return new Promise((resolve, reject) => {
         const url = apiPaths.teamProfileUrl(id);
         let teamInfoJson: any = {};
@@ -102,12 +105,12 @@ export const getTeamInfo = async (id: string | number, fetchRoster = true): Prom
                                 return u;
                             });
 
-                            resolve(teamInfoJson);
+                            resolve(teamInfoJson as IExtraLifeTeam);
                         }).catch((reason) => {
                             reject(reason);
                         });
                 } else {
-                    resolve(teamInfoJson);
+                    resolve(teamInfoJson as IExtraLifeTeam);
                 }
             } else {
                 console.log('Error obtaining team info');
@@ -124,7 +127,7 @@ export const getTeamInfo = async (id: string | number, fetchRoster = true): Prom
  * @param page - the page number to return.  defaults to 1
  * @return result - the promise for completion of function (async)
  */
-export const getTeamDonations = async (id: string | number, limit: number = 100, page: number = 1): Promise<any> => {
+export const getTeamDonations = async (id: string | number, limit: number = 100, page: number = 1): Promise<IDonationsList | any> => {
     return new Promise((resolve, reject) => {
         const teamDonationsJson: any = {};
         const url = apiPaths.teamDonationsUrl(id, limit, page);
@@ -139,7 +142,7 @@ export const getTeamDonations = async (id: string | number, limit: number = 100,
                     reject(e);
                 }
 
-                resolve(teamDonationsJson);
+                resolve(teamDonationsJson as IDonationsList);
             } else {
                 console.log('Error parsing teamDonations URL');
                 reject('There was an error trying to make your request');
@@ -155,7 +158,7 @@ export const getTeamDonations = async (id: string | number, limit: number = 100,
  * @param page - the page number to return.  defaults to 1
  * @return result - the promise for completion of function (async)
  */
-export const getTeamRoster = async (id: string | number): Promise<any> => {
+export const getTeamRoster = async (id: string | number): Promise<IRosterList | any> => {
     return new Promise((resolve, reject) => {
         const teamRosterJson: any = {};
         const url = apiPaths.teamRosterUrl(id);
@@ -175,7 +178,7 @@ export const getTeamRoster = async (id: string | number): Promise<any> => {
                     member.profileURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participants&participantID=${member.participantID}`;
                 });
 
-                resolve(teamRosterJson);
+                resolve(teamRosterJson as IRosterList);
             } else {
                 console.log('Error parsing teamRoster URL');
                 reject('There was an error trying to make your request');
