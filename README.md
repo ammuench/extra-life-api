@@ -126,8 +126,9 @@ extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=**[TEAM ID HERE]**
     }
     ```
 
-* **getTeamRoster(teamId)**
-  * Takes `teamId` as a parameter
+* **getTeamRoster(teamId, page?)**
+  * Takes `teamId` as a parameter, `page` as an optional parameter (defaults to 1)
+  * Pages cap at 100 members
   * Returns information on page and count and an array of team members
   **Returned object**
     ```javascript
