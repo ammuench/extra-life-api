@@ -33,7 +33,7 @@ export const apiPaths = {
         return `${DOMAIN_STUB}api/teams/${id}`;
     },
 
-    teamRosterUrl(id: number | string): string {
-        return `${DOMAIN_STUB}api/teams/${id}/participants`;
+    teamRosterUrl(id: number | string, offset?: number): string {
+        return `${DOMAIN_STUB}api/teams/${id}/participants${offset ? `?offset=${offset + 1}` : ''}`;
     },
 };

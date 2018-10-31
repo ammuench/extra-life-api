@@ -30,7 +30,7 @@ exports.apiPaths = {
     teamProfileUrl(id) {
         return `${DOMAIN_STUB}api/teams/${id}`;
     },
-    teamRosterUrl(id) {
-        return `${DOMAIN_STUB}api/teams/${id}/participants`;
+    teamRosterUrl(id, offset) {
+        return `${DOMAIN_STUB}api/teams/${id}/participants${offset ? `?offset=${offset + 1}` : ''}`;
     },
 };

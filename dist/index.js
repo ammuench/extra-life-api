@@ -127,19 +127,28 @@ exports.getTeamDonations = (id, limit = 100, page = 1) => __awaiter(this, void 0
         });
     });
 });
-exports.getTeamRoster = (id) => __awaiter(this, void 0, void 0, function* () {
+exports.getTeamRoster = (id, page) => __awaiter(this, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
         const teamRosterJson = {};
-        const url = api_paths_1.apiPaths.teamRosterUrl(id);
+        const offsetCalc = (page && page !== 1) ? ((page - 1) * 100) : null;
+        const url = api_paths_1.apiPaths.teamRosterUrl(id, offsetCalc);
         request(url, (error, response) => {
             if (!error && response) {
                 try {
                     teamRosterJson.countMembers = response.headers['num-records'] || 0;
                     teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
-                    teamRosterJson.members = JSON.parse(response.body);
+                    try {
+                        teamRosterJson.members = JSON.parse(response.body);
+                    }
+                    catch (e) {
+                        teamRosterJson.members = [];
+                    }
                 }
                 catch (e) {
                     reject(e);
+                }
+                if (!teamRosterJson.members) {
+                    teamRosterJson.members = [];
                 }
                 teamRosterJson.members.forEach((member) => {
                     member.avatarImageURL = 'https:' + member.avatarImageURL;

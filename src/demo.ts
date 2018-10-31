@@ -9,9 +9,9 @@ import { getTeamInfo, getTeamDonations, getUserDonations, getUserInfo, getTeamRo
 //         console.log(err);
 //     })
 
-// getTeamRoster(38961)
+// getTeamRoster(38961, 1)
 //     .then((data) => {
-//         console.log(data.members);
+//         console.log(data.members.length);
 //     })
 //     .catch((e) => {
 //         console.log(e);

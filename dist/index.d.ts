@@ -4,4 +4,4 @@ export declare const getUserInfo: (id: string | number) => Promise<IExtraLifeUse
 export declare const getUserDonations: (id: string | number, limit?: number, page?: number) => Promise<IDonationsList>;
 export declare const getTeamInfo: (id: string | number, fetchRoster?: boolean) => Promise<IExtraLifeTeam>;
 export declare const getTeamDonations: (id: string | number, limit?: number, page?: number) => Promise<IDonationsList>;
-export declare const getTeamRoster: (id: string | number) => Promise<IRosterList>;
+export declare const getTeamRoster: (id: string | number, page?: number) => Promise<IRosterList>;

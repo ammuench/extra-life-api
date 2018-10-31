@@ -151,25 +151,33 @@ export const getTeamDonations = async (id: string | number, limit: number = 100,
 };
 
 /**
- * Gets the team roster of a specific extra life team
+ * Gets the team roster of a specific extra life team.  Maxes at 100 for any call.  Pages are groups of 100
  * @param id - the team ID
- * @param limit - limit of amount results shown at once.  defaults to 100
- * @param page - the page number to return.  defaults to 1
+ * @param page - the page number to return.  returns page 1 by default
  * @return result - the promise for completion of function (async)
  */
-export const getTeamRoster = async (id: string | number): Promise<IRosterList> => {
+export const getTeamRoster = async (id: string | number, page?: number): Promise<IRosterList> => {
     return new Promise<IRosterList>((resolve, reject) => {
         const teamRosterJson: any = {};
-        const url = apiPaths.teamRosterUrl(id);
+        const offsetCalc = (page && page !== 1) ? ((page - 1) * 100) : null;
+        const url = apiPaths.teamRosterUrl(id, offsetCalc);
 
         request(url, (error, response) => {
             if (!error && response) {
                 try {
                     teamRosterJson.countMembers = response.headers['num-records'] || 0;
                     teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
-                    teamRosterJson.members = JSON.parse(response.body);
+                    try {
+                        teamRosterJson.members = JSON.parse(response.body);
+                    } catch (e) {
+                        teamRosterJson.members = [];
+                    }
                 } catch (e) {
                     reject(e);
+                }
+
+                if (!teamRosterJson.members) {
+                    teamRosterJson.members = [];
                 }
 
                 teamRosterJson.members.forEach((member: any) => {
