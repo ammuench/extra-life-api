@@ -1,4 +1,4 @@
-import * as request from 'request';
+import { request } from 'urllib';
 
 import { apiPaths } from './helpers/api-paths';
 import { IDonationsList, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
@@ -57,12 +57,12 @@ export const getUserDonations = async (id: string | number, limit: number = 0, p
         const url = apiPaths.userDonationUrl(id, limit, page);
         const userDonationsJson: any = {};
 
-        request(url, (error, response) => {
+        request(url, (error, data, response) => {
             if (!error && response) {
                 try {
                     userDonationsJson.countDonations = response.headers['x-total-records'] || 0;
                     userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
-                    userDonationsJson.donations = JSON.parse(response.body);
+                    userDonationsJson.donations = JSON.parse(data.toString());
                     resolve(userDonationsJson);
                 } catch (e) {
                     reject(e);
@@ -87,10 +87,10 @@ export const getTeamInfo = async (id: string | number, fetchRoster = true): Prom
         const url = apiPaths.teamProfileUrl(id);
         let teamInfoJson: any = {};
 
-        request(url, (error, response) => {
+        request(url, (error, data, response) => {
             if (!error && response) {
                 try {
-                    teamInfoJson = JSON.parse(response.body);
+                    teamInfoJson = JSON.parse(data.toString());
                 } catch (e) {
                     reject(e);
                 }
@@ -98,8 +98,8 @@ export const getTeamInfo = async (id: string | number, fetchRoster = true): Prom
                 teamInfoJson.teamURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=${id}`;
                 if (fetchRoster) {
                     getTeamRoster(id)
-                        .then((data) => {
-                            teamInfoJson.members = data.members.map((u: any) => {
+                        .then((rosterData) => {
+                            teamInfoJson.members = rosterData.members.map((u: any) => {
                                 u.URL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=${u.participantID}`;
                                 return u;
                             });
@@ -131,12 +131,12 @@ export const getTeamDonations = async (id: string | number, limit: number = 100,
         const teamDonationsJson: any = {};
         const url = apiPaths.teamDonationsUrl(id, limit, page);
 
-        request(url, (error, response) => {
+        request(url, (error, data, response) => {
             if (!error && response) {
                 try {
                     teamDonationsJson.countDonations = response.headers['num-records'] || 0;
                     teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
-                    teamDonationsJson.donations = JSON.parse(response.body);
+                    teamDonationsJson.donations = JSON.parse(data.toString());
                 } catch (e) {
                     reject(e);
                 }
@@ -162,13 +162,13 @@ export const getTeamRoster = async (id: string | number, page?: number): Promise
         const offsetCalc = (page && page !== 1) ? ((page - 1) * 100) : null;
         const url = apiPaths.teamRosterUrl(id, offsetCalc);
 
-        request(url, (error, response) => {
+        request(url, (error, data, response) => {
             if (!error && response) {
                 try {
                     teamRosterJson.countMembers = response.headers['num-records'] || 0;
                     teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
                     try {
-                        teamRosterJson.members = JSON.parse(response.body);
+                        teamRosterJson.members = JSON.parse(data.toString());
                     } catch (e) {
                         teamRosterJson.members = [];
                     }

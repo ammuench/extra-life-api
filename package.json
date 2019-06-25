@@ -12,7 +12,7 @@
     "extra",
     "life",
     "api",
-    "express",
+    "typescript",
     "extralife",
     "extra-life"
   ],
@@ -29,48 +29,18 @@
     "clean": "rimraf lib",
     "demo": "npm run build && node dist/demo.js",
     "lint": "tslint --force --format verbose \"src/**/*.ts\"",
-    "build": "npm run clean && npm run lint && echo Using TypeScript && tsc --version && tsc --pretty",
-    "test": "npm run build && mocha --compilers ts:ts-node/register --recursive 'test/**/*-spec.ts'",
-    "coverage": "nyc --include='src/**/*.ts' --reporter=text --reporter=html --reporter=lcov mocha --require ts-node/register --compilers ts:ts-node/register --recursive 'test/**/*-spec.ts'",
-    "watch": "npm run build -- --watch",
-    "watch:test": "npm run test -- --watch",
-    "start": "node dist/index.js"
+    "build": "npm run clean && npm run lint && echo Using TypeScript && tsc --version && tsc --pretty"
   },
   "dependencies": {
-    "request": "^2.88.0",
-    "tslint": "^5.9.0"
+    "urllib": "^2.34.0"
   },
   "devDependencies": {
-    "@types/chai": "^3.0.0",
-    "@types/mocha": "^2.0.0",
-    "@types/node": "^7.0.0",
-    "@types/request": "^2.47.1",
-    "@types/sinon": "^4.3.0",
-    "chai": "^3.0.0",
-    "coveralls": "^3.0.2",
-    "mocha": "^5.2.0",
-    "nyc": "^11.0.0",
-    "request": "^2.88.0",
-    "rimraf": "^2.0.0",
-    "sinon": "^4.4.2",
-    "ts-node": "^5.0.0",
+    "rimraf": "^2.6.3",
+    "ts-node": "^8.3.0",
     "tslint": "^5.3.2",
-    "typescript": "^2.8.0"
+    "typescript": "^3.5.2"
   },
   "engines": {
     "node": ">=4.0.0"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*"
-    ],
-    "exclude": [
-      "lib"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "reporter": [],
-    "all": true
   }
 }

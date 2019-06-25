@@ -9,13 +9,13 @@ import { getTeamInfo, getTeamDonations, getUserDonations, getUserInfo, getTeamRo
 //         console.log(err);
 //     })
 
-// getTeamRoster(38961, 1)
-//     .then((data) => {
-//         console.log(data.members.length);
-//     })
-//     .catch((e) => {
-//         console.log(e);
-//     });
+getTeamRoster(44504, 1)
+    .then((data) => {
+        console.log(data.members.length);
+    })
+    .catch((e) => {
+        console.log(e);
+    });
 
 // getTeamDonations(38961, 50)
 //     .then((data) => {

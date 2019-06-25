@@ -8,13 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const request = require("request");
+const urllib_1 = require("urllib");
 const api_paths_1 = require("./helpers/api-paths");
 exports.getUserInfo = (id) => __awaiter(this, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
         const url = api_paths_1.apiPaths.profileUrl(id);
         let userInfoJson = {};
-        request(url, (error, response) => {
+        urllib_1.request(url, (error, response) => {
             if (!error && response) {
                 try {
                     userInfoJson = JSON.parse(response.body);
@@ -48,12 +48,12 @@ exports.getUserDonations = (id, limit = 0, page = 1) => __awaiter(this, void 0, 
     return new Promise((resolve, reject) => {
         const url = api_paths_1.apiPaths.userDonationUrl(id, limit, page);
         const userDonationsJson = {};
-        request(url, (error, response) => {
+        urllib_1.request(url, (error, data, response) => {
             if (!error && response) {
                 try {
                     userDonationsJson.countDonations = response.headers['x-total-records'] || 0;
                     userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
-                    userDonationsJson.donations = JSON.parse(response.body);
+                    userDonationsJson.donations = JSON.parse(data.toString());
                     resolve(userDonationsJson);
                 }
                 catch (e) {
@@ -71,10 +71,10 @@ exports.getTeamInfo = (id, fetchRoster = true) => __awaiter(this, void 0, void 0
     return new Promise((resolve, reject) => {
         const url = api_paths_1.apiPaths.teamProfileUrl(id);
         let teamInfoJson = {};
-        request(url, (error, response) => {
+        urllib_1.request(url, (error, data, response) => {
             if (!error && response) {
                 try {
-                    teamInfoJson = JSON.parse(response.body);
+                    teamInfoJson = JSON.parse(data.toString());
                 }
                 catch (e) {
                     reject(e);
@@ -83,8 +83,8 @@ exports.getTeamInfo = (id, fetchRoster = true) => __awaiter(this, void 0, void 0
                 teamInfoJson.teamURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=${id}`;
                 if (fetchRoster) {
                     exports.getTeamRoster(id)
-                        .then((data) => {
-                        teamInfoJson.members = data.members.map((u) => {
+                        .then((rosterData) => {
+                        teamInfoJson.members = rosterData.members.map((u) => {
                             u.URL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=${u.participantID}`;
                             return u;
                         });
@@ -108,12 +108,12 @@ exports.getTeamDonations = (id, limit = 100, page = 1) => __awaiter(this, void 0
     return new Promise((resolve, reject) => {
         const teamDonationsJson = {};
         const url = api_paths_1.apiPaths.teamDonationsUrl(id, limit, page);
-        request(url, (error, response) => {
+        urllib_1.request(url, (error, data, response) => {
             if (!error && response) {
                 try {
                     teamDonationsJson.countDonations = response.headers['num-records'] || 0;
                     teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
-                    teamDonationsJson.donations = JSON.parse(response.body);
+                    teamDonationsJson.donations = JSON.parse(data.toString());
                 }
                 catch (e) {
                     reject(e);
@@ -132,13 +132,13 @@ exports.getTeamRoster = (id, page) => __awaiter(this, void 0, void 0, function* 
         const teamRosterJson = {};
         const offsetCalc = (page && page !== 1) ? ((page - 1) * 100) : null;
         const url = api_paths_1.apiPaths.teamRosterUrl(id, offsetCalc);
-        request(url, (error, response) => {
+        urllib_1.request(url, (error, data, response) => {
             if (!error && response) {
                 try {
                     teamRosterJson.countMembers = response.headers['num-records'] || 0;
                     teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
                     try {
-                        teamRosterJson.members = JSON.parse(response.body);
+                        teamRosterJson.members = JSON.parse(data.toString());
                     }
                     catch (e) {
                         teamRosterJson.members = [];
