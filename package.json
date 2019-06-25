@@ -32,9 +32,10 @@
     "build": "npm run clean && npm run lint && echo Using TypeScript && tsc --version && tsc --pretty"
   },
   "dependencies": {
-    "urllib": "^2.34.0"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
+    "@types/node-fetch": "^2.3.7",
     "rimraf": "^2.6.3",
     "ts-node": "^8.3.0",
     "tslint": "^5.3.2",

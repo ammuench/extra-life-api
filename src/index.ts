@@ -1,4 +1,4 @@
-import { request } from 'urllib';
+import fetch from 'node-fetch';
 
 import { apiPaths } from './helpers/api-paths';
 import { IDonationsList, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
@@ -16,10 +16,10 @@ export const getUserInfo = async (id: string | number): Promise<IExtraLifeUser> 
         const url = apiPaths.profileUrl(id as number);
         let userInfoJson: any = {};
 
-        request(url, (error: any, response: any) => {
-            if (!error && response) {
+        fetch(url)
+            .then((res) => {
                 try {
-                    userInfoJson = JSON.parse(response.body);
+                    userInfoJson = res.json();
                     userInfoJson.avatarImageURL = 'https:' + userInfoJson.avatarImageURL;
                     userInfoJson.donateURL = `https://www.extra-life.org/index.cfm?fuseaction=donate.participant&participantID=${id}`;
 
@@ -37,11 +37,11 @@ export const getUserInfo = async (id: string | number): Promise<IExtraLifeUser> 
                 } catch (e) {
                     reject(e);
                 }
-            } else {
+            })
+            .catch(() => {
                 console.log('Error parsing userInfo URL');
                 reject('There was an error trying to make your request');
-            }
-        });
+            });
     });
 };
 
@@ -57,28 +57,28 @@ export const getUserDonations = async (id: string | number, limit: number = 0, p
         const url = apiPaths.userDonationUrl(id, limit, page);
         const userDonationsJson: any = {};
 
-        request(url, (error, data, response) => {
-            if (!error && response) {
+        fetch(url)
+            .then(async (res) => {
                 try {
-                    userDonationsJson.countDonations = response.headers['x-total-records'] || 0;
+                    userDonationsJson.countDonations = res.headers.get('num-records') || 0;
                     userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
-                    userDonationsJson.donations = JSON.parse(data.toString());
+                    userDonationsJson.donations = await res.json();
                     resolve(userDonationsJson);
                 } catch (e) {
                     reject(e);
                 }
-            } else {
+            })
+            .catch(() => {
                 console.log('Error parsing userDonations URL');
                 reject('There was an error trying to make your request');
-            }
-        });
+            });
     });
 };
 
 /**
  * Gets the team infomation of a specific team from extra life
  * @param id - the team ID
- * @param fetchRoster - whether or not to fetch team roster
+ * @param [fetchRoster=true] - whether or not to fetch team roster (default=true)
  * @return result - the promise for completion of function (async)
  */
 
@@ -87,15 +87,14 @@ export const getTeamInfo = async (id: string | number, fetchRoster = true): Prom
         const url = apiPaths.teamProfileUrl(id);
         let teamInfoJson: any = {};
 
-        request(url, (error, data, response) => {
-            if (!error && response) {
+        fetch(url)
+            .then(async (res) => {
                 try {
-                    teamInfoJson = JSON.parse(data.toString());
+                    teamInfoJson = await res.json();
                 } catch (e) {
                     reject(e);
                 }
                 teamInfoJson.avatarImageURL = 'http:' + teamInfoJson.avatarImageURL;
-                teamInfoJson.teamURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=${id}`;
                 if (fetchRoster) {
                     getTeamRoster(id)
                         .then((rosterData) => {
@@ -111,11 +110,11 @@ export const getTeamInfo = async (id: string | number, fetchRoster = true): Prom
                 } else {
                     resolve(teamInfoJson);
                 }
-            } else {
+            })
+            .catch(() => {
                 console.log('Error obtaining team info');
                 reject('There was an error trying to make your request');
-            }
-        });
+            });
     });
 };
 
@@ -131,22 +130,22 @@ export const getTeamDonations = async (id: string | number, limit: number = 100,
         const teamDonationsJson: any = {};
         const url = apiPaths.teamDonationsUrl(id, limit, page);
 
-        request(url, (error, data, response) => {
-            if (!error && response) {
+        fetch(url)
+            .then(async (res) => {
                 try {
-                    teamDonationsJson.countDonations = response.headers['num-records'] || 0;
+                    teamDonationsJson.countDonations = res.headers.get('num-records') || 0;
                     teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
-                    teamDonationsJson.donations = JSON.parse(data.toString());
+                    teamDonationsJson.donations = await res.json();
                 } catch (e) {
                     reject(e);
                 }
 
                 resolve(teamDonationsJson);
-            } else {
+            })
+            .catch(() => {
                 console.log('Error parsing teamDonations URL');
                 reject('There was an error trying to make your request');
-            }
-        });
+            });
     });
 };
 
@@ -162,13 +161,13 @@ export const getTeamRoster = async (id: string | number, page?: number): Promise
         const offsetCalc = (page && page !== 1) ? ((page - 1) * 100) : null;
         const url = apiPaths.teamRosterUrl(id, offsetCalc);
 
-        request(url, (error, data, response) => {
-            if (!error && response) {
+        fetch(url)
+            .then(async (res) => {
                 try {
-                    teamRosterJson.countMembers = response.headers['num-records'] || 0;
+                    teamRosterJson.countMembers = res.headers.get('num-records') || 0;
                     teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
                     try {
-                        teamRosterJson.members = JSON.parse(data.toString());
+                        teamRosterJson.members = await res.json();
                     } catch (e) {
                         teamRosterJson.members = [];
                     }
@@ -182,14 +181,13 @@ export const getTeamRoster = async (id: string | number, page?: number): Promise
 
                 teamRosterJson.members.forEach((member: any) => {
                     member.avatarImageURL = 'https:' + member.avatarImageURL;
-                    member.profileURL = `https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participants&participantID=${member.participantID}`;
                 });
 
                 resolve(teamRosterJson);
-            } else {
+            })
+            .catch(() => {
                 console.log('Error parsing teamRoster URL');
                 reject('There was an error trying to make your request');
-            }
-        });
+            });
     });
 };

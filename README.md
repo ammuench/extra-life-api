@@ -3,7 +3,7 @@ A node module to integrate with the extra-life API, and extends it to provide ad
 
 ## Background
 ------
-[I've been doing Extra Life for multiple years now](https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=320706), and every year I've built a custom little website to send to family, friends, and coworkers to help collect donations.
+[I've been doing Extra Life for multiple years now](https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=362008), and every year I've built a custom little website to send to family, friends, and coworkers to help collect donations.
 
 Initially, Extra Life had no public API to grab data about your team's donations, goals, info, etc.  So the old versions of this used to scrape various Extra Life profile page to return data so people could build cool little site or stream overlays to adverise their campaign more effectively!
 
@@ -57,10 +57,15 @@ extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=**[TEAM ID HERE]**
       createdDateUTC: '2018-06-15T19:18:15.77+0000',
       eventID: 539,
       sumDonations: 250,
+      sumPledges: 0;
       teamID: 38961,
       isTeamCaptain: false,
       numDonations: 17,
-      donateURL: 'https://www.extra-life.org/index.cfm?fuseaction=donate.participant&participantID=506571',
+      links: {
+        donate: 'https://www.extra-life.org/index.cfm?fuseaction=donate.participant&participantID=506571',
+        page: 'https://www.extra-life.org/index.cfm?fuseaction=donate.participant&participantID=506571',
+        stream: 'http://twitch.tv/mystream' // Optional
+      },
       teamURL: 'https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=38961' 
     }
     ```
@@ -105,7 +110,9 @@ extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=**[TEAM ID HERE]**
       teamID: 38961,
       name: 'Extra Life Nerds',
       numDonations: 51,
-      teamURL: 'https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=38961' },
+      links: {
+        page: 'https://www.extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=38961'
+      },
       members: [
         { displayName: 'Alex Muench',
           fundraisingGoal: 1000,
@@ -119,7 +126,11 @@ extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=**[TEAM ID HERE]**
           teamID: 38961,
           isTeamCaptain: false,
           numDonations: 0,
-          profileURL: 'https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participants&participantID=320706',
+          links: {
+            donate: 'https://www.extra-life.org/index.cfm?fuseaction=donate.participant&participantID=506571',
+            page: 'https://www.extra-life.org/index.cfm?fuseaction=donate.participant&participantID=506571',
+            stream: 'http://twitch.tv/mystream' // Optional
+          },
           URL: 'https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=320706'
         }
       ]
@@ -148,7 +159,11 @@ extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=**[TEAM ID HERE]**
           teamID: 38961,
           isTeamCaptain: false,
           numDonations: 0,
-          profileURL: 'https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participants&participantID=320706',
+          links: {
+            donate: 'https://www.extra-life.org/index.cfm?fuseaction=donate.participant&participantID=506571',
+            page: 'https://www.extra-life.org/index.cfm?fuseaction=donate.participant&participantID=506571',
+            stream: 'http://twitch.tv/mystream' // Optional
+          },
           URL: 'https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=320706'
         }
       ]
@@ -167,34 +182,15 @@ extra-life.org/index.cfm?fuseaction=donorDrive.team&teamID=**[TEAM ID HERE]**
       countPages: 1,
       donations: [
         { 
-          displayName: 'Joe Smith',
-          message: null,
+          displayName: 'Joe Smith', // Optional
+          message: 'Congrats!', // Optional
+          donorID: 'ASDFF-AB7F-8295-1283655555F38D6D', // Optional
           participantID: 55555,
           amount: 19,
-          donorID: 'ASDFF-AB7F-8295-1283655555F38D6D',
           avatarImageURL: '//assets.donordrive.com/extralife/images/$avatars$/constituent_ASDFF-AB7F-8295-1283655555F38D6D.jpg',
           createdDateUTC: '2018-01-22T14:39:04.783+0000',
-          teamID: 38961 
-        },
-        {  
-          displayName: 'Joan Smith',
-          message: null,
-          participantID: 55555,
-          amount: 19,
-          donorID: 'ASDFF-AB7F-8295-1283655555F38D6D',
-          avatarImageURL: '//assets.donordrive.com/extralife/images/$avatars$/constituent_ASDFF-AB7F-8295-1283655555F38D6D.jpg',
-          createdDateUTC: '2018-01-20T18:15:20.607+0000',
-          teamID: 38961
-        },
-        { 
-          displayName: 'Joey Smith',
-          message: null,
-          participantID: 55555,
-          amount: 19,
-          donorID: 'ASDFF-AB7F-8295-1283655555F38D6D',
-          avatarImageURL: '//assets.donordrive.com/extralife/images/$avatars$/constituent_ASDFF-AB7F-8295-1283655555F38D6D.jpg',
-          createdDateUTC: '2018-01-20T17:47:14.630+0000',
-          teamID: 38961 
+          teamID: 38961,
+          donationID: '82CF0B9B7BB0SFAC'
         }
       ]
     }
@@ -235,4 +231,4 @@ I'd like to reach out and thank the following devs for their contributions to th
 
 Shamless Plug
 ------
-If you like this work, you can [donate to my Extra Life page here](https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=320706).
+If you like this work, you can [donate to my Extra Life page here](https://www.extra-life.org/index.cfm?fuseaction=donorDrive.participant&participantID=362008).

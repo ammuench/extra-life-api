@@ -2,7 +2,11 @@ export interface IExtraLifeUser {
     avatarImageURL: string;
     createdDateUTC: string;
     displayName: string;
-    donateURL: string;
+    links: {
+        donate: string;
+        page: string;
+        stream?: string;
+    };
     eventID: number;
     eventName: string;
     fundraisingGoal: number;
@@ -10,19 +14,22 @@ export interface IExtraLifeUser {
     numDonations: number;
     participantID: number;
     sumDonations: number;
+    sumPledges: number;
     teamID?: number;
     teamName?: string;
     teamURL?: string;
 }
 
 export interface IExtraLifeDonation {
-    displayName: string;
-    message: string;
     participantID: number;
     amount: number;
-    donorID: string;
     avatarImageURL: string;
     createdDateUTC: string;
+    donationID: string;
+    displayName?: string;
+    message?: string;
+    teamID?: number;
+    donorID?: string;
 }
 
 export interface IExtraLifeTeam {
@@ -35,8 +42,12 @@ export interface IExtraLifeTeam {
     teamID: number;
     name: string;
     numDonations: number;
-    teamURL: string;
+    links: {
+        page: string;
+    };
     members?: IExtraLifeUser[];
+    isInviteOnly: boolean;
+    captainDisplayName: string;
 }
 
 export interface IRosterList {
