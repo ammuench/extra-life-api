@@ -52,7 +52,7 @@ export const getUserInfo = async (id: string | number): Promise<IExtraLifeUser> 
  * @param page - the page number to return
  * @return result - the promise for completion of function (async)
  */
-export const getUserDonations = async (id: string | number, limit: number = 0, page: number = 1): Promise<IDonationsList> => {
+export const getUserDonations = async (id: string | number, limit: number = 100, page: number = 1): Promise<IDonationsList> => {
     return new Promise<IDonationsList>((resolve, reject) => {
         const url = apiPaths.userDonationUrl(id, limit, page);
         const userDonationsJson: any = {};
@@ -61,7 +61,7 @@ export const getUserDonations = async (id: string | number, limit: number = 0, p
             .then(async (res) => {
                 try {
                     userDonationsJson.countDonations = res.headers.get('num-records') || 0;
-                    userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
+                    userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / limit);
                     userDonationsJson.donations = await res.json();
                     resolve(userDonationsJson);
                 } catch (e) {
@@ -134,7 +134,7 @@ export const getTeamDonations = async (id: string | number, limit: number = 100,
             .then(async (res) => {
                 try {
                     teamDonationsJson.countDonations = res.headers.get('num-records') || 0;
-                    teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
+                    teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / limit);
                     teamDonationsJson.donations = await res.json();
                 } catch (e) {
                     reject(e);
