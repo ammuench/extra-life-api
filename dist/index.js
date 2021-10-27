@@ -43,7 +43,7 @@ exports.getUserInfo = (id) => __awaiter(this, void 0, void 0, function* () {
         });
     });
 });
-exports.getUserDonations = (id, limit = 0, page = 1) => __awaiter(this, void 0, void 0, function* () {
+exports.getUserDonations = (id, limit = 100, page = 1) => __awaiter(this, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
         const url = api_paths_1.apiPaths.userDonationUrl(id, limit, page);
         const userDonationsJson = {};
@@ -51,7 +51,7 @@ exports.getUserDonations = (id, limit = 0, page = 1) => __awaiter(this, void 0, 
             .then((res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 userDonationsJson.countDonations = res.headers.get('num-records') || 0;
-                userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / 100);
+                userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / limit);
                 userDonationsJson.donations = yield res.json();
                 resolve(userDonationsJson);
             }
@@ -108,7 +108,7 @@ exports.getTeamDonations = (id, limit = 100, page = 1) => __awaiter(this, void 0
             .then((res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 teamDonationsJson.countDonations = res.headers.get('num-records') || 0;
-                teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / 100);
+                teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / limit);
                 teamDonationsJson.donations = yield res.json();
             }
             catch (e) {

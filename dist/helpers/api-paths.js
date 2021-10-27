@@ -5,7 +5,7 @@ const pageOffset = (limit, page) => {
     if (page === 1) {
         return 1;
     }
-    return limit * page;
+    return limit * (page - 1);
 };
 exports.apiPaths = {
     userDonationUrl(id, limit = 100, page = 1) {
