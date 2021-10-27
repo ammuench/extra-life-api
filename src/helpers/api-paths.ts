@@ -5,7 +5,7 @@ const pageOffset = (limit: number, page: number): number => {
         return 1;
     }
 
-    return limit * page;
+    return limit * (page - 1);
 };
 
 export const apiPaths = {
