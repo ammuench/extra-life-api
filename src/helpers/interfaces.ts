@@ -38,7 +38,7 @@ export interface IExtraLifeDonation {
     recipientName: string;
     links: {
         recipient: string;
-    }
+    };
 }
 
 export interface IExtraLifeTeam {

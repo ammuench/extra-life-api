@@ -18,6 +18,10 @@ export interface IExtraLifeUser {
     teamID?: number;
     teamName?: string;
     teamURL?: string;
+    numMilestones: number;
+    numIncentives: number;
+    isCustomAvatarImage: boolean;
+    URL: string;
 }
 export interface IExtraLifeDonation {
     participantID: number;
@@ -29,6 +33,11 @@ export interface IExtraLifeDonation {
     message?: string;
     teamID?: number;
     donorID?: string;
+    eventID: number;
+    recipientName: string;
+    links: {
+        recipient: string;
+    };
 }
 export interface IExtraLifeTeam {
     fundraisingGoal: number;
@@ -41,11 +50,20 @@ export interface IExtraLifeTeam {
     name: string;
     numDonations: number;
     links: {
+        stream?: string;
         page: string;
     };
     members?: IExtraLifeUser[];
     isInviteOnly: boolean;
     captainDisplayName: string;
+    numParticipants: number;
+    hasTeamOnlyDonations: boolean;
+    streamIsLive: boolean;
+    streamIsEnabled: boolean;
+    streamingPlatform: string;
+    sumPledges: number;
+    streamingChannel: string;
+    isCustomAvatarImage: boolean;
 }
 export interface IRosterList {
     countMembers: number;

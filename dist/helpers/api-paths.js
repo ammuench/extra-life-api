@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.apiPaths = void 0;
 const DOMAIN_STUB = 'https://www.extra-life.org/';
 const pageOffset = (limit, page) => {
     if (page === 1) {
