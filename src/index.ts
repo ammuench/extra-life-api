@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
 import { apiPaths } from './helpers/api-paths';
-import { IDonationsList, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
+import { IDonationsList, IExtraLifeBadge, IExtraLifeIncentive, IExtraLifeMilestone, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
 
 export { IDonationsList, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
 
@@ -72,6 +72,66 @@ export const getUserDonations = async (id: string | number, limit: number = 100,
                 console.log('Error parsing userDonations URL');
                 reject('There was an error trying to make your request');
             });
+    });
+};
+
+/**
+ * Gets a list of a user's milestones
+ * @param id - the user participant ID
+ * @return result - the promise for completion of function (async)
+ */
+export const getUserMilestones = async (id: string | number): Promise<IExtraLifeMilestone[]> => {
+    return new Promise<IExtraLifeMilestone[]>((resolve, reject) => {
+        const url = apiPaths.milestoneUrl(id);
+
+        fetch(url).then((res) => {
+            try {
+                const result = res.json();
+                resolve(result);
+            } catch (e) {
+                reject(e);
+            }
+        });
+    });
+};
+
+/**
+ * Gets a list of a user's incentives
+ * @param id - the user participant ID
+ * @return result - the promise for completion of function (async)
+ */
+export const getUserIncentives = async (id: string | number): Promise<IExtraLifeIncentive[]> => {
+    return new Promise<IExtraLifeIncentive[]>((resolve, reject) => {
+        const url = apiPaths.incentiveUrl(id);
+
+        fetch(url).then((res) => {
+            try {
+                const result = res.json();
+                resolve(result);
+            } catch (e) {
+                reject(e);
+            }
+        });
+    });
+};
+
+/**
+ * Gets a list of a user's badges
+ * @param id - the user participant ID
+ * @return result - the promise for completion of function (async)
+ */
+export const getUserBadges = async (id: string | number): Promise<IExtraLifeBadge[]> => {
+    return new Promise<IExtraLifeBadge[]>((resolve, reject) => {
+        const url = apiPaths.badgeUrl(id);
+
+        fetch(url).then((res) => {
+            try {
+                const result = res.json();
+                resolve(result);
+            } catch (e) {
+                reject(e);
+            }
+        });
     });
 };
 
