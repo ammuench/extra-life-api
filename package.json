@@ -32,7 +32,7 @@
     "build": "npm run clean && npm run lint && echo Using TypeScript && tsc --version && tsc --pretty"
   },
   "dependencies": {
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^3.1.1"
   },
   "devDependencies": {
     "@types/node-fetch": "^2.3.7",
