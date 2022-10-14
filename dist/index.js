@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTeamRoster = exports.getTeamDonations = exports.getTeamInfo = exports.getUserDonations = exports.getUserInfo = void 0;
+exports.getTeamRoster = exports.getTeamDonations = exports.getTeamInfo = exports.getUserBadges = exports.getUserIncentives = exports.getUserMilestones = exports.getUserDonations = exports.getUserInfo = void 0;
 const node_fetch_1 = require("node-fetch");
 const api_paths_1 = require("./helpers/api-paths");
 exports.getUserInfo = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -64,6 +64,48 @@ exports.getUserDonations = (id, limit = 100, page = 1) => __awaiter(void 0, void
             .catch(() => {
             console.log('Error parsing userDonations URL');
             reject('There was an error trying to make your request');
+        });
+    });
+});
+exports.getUserMilestones = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve, reject) => {
+        const url = api_paths_1.apiPaths.milestoneUrl(id);
+        node_fetch_1.default(url).then((res) => {
+            try {
+                const result = res.json();
+                resolve(result);
+            }
+            catch (e) {
+                reject(e);
+            }
+        });
+    });
+});
+exports.getUserIncentives = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve, reject) => {
+        const url = api_paths_1.apiPaths.incentiveUrl(id);
+        node_fetch_1.default(url).then((res) => {
+            try {
+                const result = res.json();
+                resolve(result);
+            }
+            catch (e) {
+                reject(e);
+            }
+        });
+    });
+});
+exports.getUserBadges = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve, reject) => {
+        const url = api_paths_1.apiPaths.badgeUrl(id);
+        node_fetch_1.default(url).then((res) => {
+            try {
+                const result = res.json();
+                resolve(result);
+            }
+            catch (e) {
+                reject(e);
+            }
         });
     });
 });

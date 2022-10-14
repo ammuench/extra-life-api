@@ -23,6 +23,35 @@ export interface IExtraLifeUser {
     isCustomAvatarImage: boolean;
     URL: string;
 }
+export interface IExtraLifeMilestone {
+    fundraisingGoal: number;
+    description: string;
+    links?: {
+        donate: string;
+    };
+    milestoneID: string;
+    isActive: boolean;
+}
+export interface IExtraLifeIncentive {
+    amount: number;
+    description: string;
+    incentiveImageURL: string;
+    quantity: number;
+    quantityClaimed: number;
+    links?: {
+        donate: string;
+    };
+    incentiveID: string;
+    isActive: boolean;
+}
+export interface IExtraLifeBadge {
+    description: string;
+    isUnlocked: boolean;
+    title: string;
+    unlockedDateUTC: string;
+    badgeImageURL: string;
+    badgeCode: string;
+}
 export interface IExtraLifeDonation {
     participantID: number;
     amount: number;

@@ -20,6 +20,15 @@ exports.apiPaths = {
     profileUrl(id) {
         return `${DOMAIN_STUB}api/participants/${id}`;
     },
+    milestoneUrl(id) {
+        return `${DOMAIN_STUB}api/participants/${id}/milestones`;
+    },
+    incentiveUrl(id) {
+        return `${DOMAIN_STUB}api/participants/${id}/incentives`;
+    },
+    badgeUrl(id) {
+        return `${DOMAIN_STUB}api/participants/${id}/badges`;
+    },
     teamDonationsUrl(id, limit = 100, page = 1) {
         if (!limit) {
             return `${DOMAIN_STUB}api/teams/${id}/donations`;

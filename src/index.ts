@@ -86,7 +86,7 @@ export const getUserMilestones = async (id: string | number): Promise<IExtraLife
 
         fetch(url).then((res) => {
             try {
-                const result = res.json();
+                const result: any = res.json();
                 resolve(result);
             } catch (e) {
                 reject(e);
@@ -106,7 +106,7 @@ export const getUserIncentives = async (id: string | number): Promise<IExtraLife
 
         fetch(url).then((res) => {
             try {
-                const result = res.json();
+                const result: any = res.json();
                 resolve(result);
             } catch (e) {
                 reject(e);
@@ -126,7 +126,7 @@ export const getUserBadges = async (id: string | number): Promise<IExtraLifeBadg
 
         fetch(url).then((res) => {
             try {
-                const result = res.json();
+                const result: any = res.json();
                 resolve(result);
             } catch (e) {
                 reject(e);
