@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
 import { apiPaths } from './helpers/api-paths';
-import { IDonationsList, IExtraLifeBadge, IExtraLifeIncentive, IExtraLifeMilestone, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
+import { IBadgesList, IDonationsList, IExtraLifeTeam, IExtraLifeUser, IIncentivesList, IMilestonesList, IRosterList } from './helpers/interfaces';
 
 export { IDonationsList, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
 
@@ -60,7 +60,7 @@ export const getUserDonations = async (id: string | number, limit: number = 100,
         fetch(url)
             .then(async (res) => {
                 try {
-                    userDonationsJson.countDonations = res.headers.get('num-records') || 0;
+                    userDonationsJson.countDonations = parseInt(res.headers.get('num-records'), 10) || 0;
                     userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / limit);
                     userDonationsJson.donations = await res.json();
                     resolve(userDonationsJson);
@@ -78,60 +78,90 @@ export const getUserDonations = async (id: string | number, limit: number = 100,
 /**
  * Gets a list of a user's milestones
  * @param id - the user participant ID
+ * @param limit - limit of amount results shown at once.  defaults to 100
+ * @param page - the page number to return
  * @return result - the promise for completion of function (async)
  */
-export const getUserMilestones = async (id: string | number): Promise<IExtraLifeMilestone[]> => {
-    return new Promise<IExtraLifeMilestone[]>((resolve, reject) => {
-        const url = apiPaths.milestoneUrl(id);
+export const getUserMilestones = async (id: string | number, limit: number = 100, page: number = 1): Promise<IMilestonesList> => {
+    return new Promise<IMilestonesList>((resolve, reject) => {
+        const url = apiPaths.userMilestonesUrl(id, limit, page);
+        const userMilestonesJson: any = {};
 
-        fetch(url).then((res) => {
-            try {
-                const result: any = res.json();
-                resolve(result);
-            } catch (e) {
-                reject(e);
-            }
+        fetch(url)
+            .then(async (res) => {
+                try {
+                    userMilestonesJson.countMilestones = parseInt(res.headers.get('num-records'), 10) || 0;
+                    userMilestonesJson.countPages = Math.ceil(userMilestonesJson.countMilestones / limit);
+                    userMilestonesJson.milestones = await res.json();
+                    resolve(userMilestonesJson);
+                } catch (e) {
+                    reject(e);
+                }
+            })
+            .catch(() => {
+                console.log('Error parsing userMilestones URL');
+                reject('There was an error trying to make your request');
+            });
         });
-    });
-};
+    };
 
 /**
  * Gets a list of a user's incentives
  * @param id - the user participant ID
+ * @param limit - limit of amount results shown at once.  defaults to 100
+ * @param page - the page number to return
  * @return result - the promise for completion of function (async)
  */
-export const getUserIncentives = async (id: string | number): Promise<IExtraLifeIncentive[]> => {
-    return new Promise<IExtraLifeIncentive[]>((resolve, reject) => {
-        const url = apiPaths.incentiveUrl(id);
+export const getUserIncentives = async (id: string | number, limit: number = 100, page: number = 1): Promise<IIncentivesList> => {
+    return new Promise<IIncentivesList>((resolve, reject) => {
+        const url = apiPaths.userIncentivesUrl(id, limit, page);
+        const userIncentivesJson: any = {};
 
-        fetch(url).then((res) => {
-            try {
-                const result: any = res.json();
-                resolve(result);
-            } catch (e) {
-                reject(e);
-            }
-        });
+        fetch(url)
+            .then(async (res) => {
+                try {
+                    userIncentivesJson.countIncentives = parseInt(res.headers.get('num-records'), 10) || 0;
+                    userIncentivesJson.countPages = Math.ceil(userIncentivesJson.countIncentives / limit);
+                    userIncentivesJson.incentives = await res.json();
+                    resolve(userIncentivesJson);
+                } catch (e) {
+                    reject(e);
+                }
+            })
+            .catch(() => {
+                console.log('Error parsing userIncentives URL');
+                reject('There was an error trying to make your request');
+            });
     });
 };
 
 /**
  * Gets a list of a user's badges
  * @param id - the user participant ID
+ * @param limit - limit of amount results shown at once.  defaults to 100
+ * @param page - the page number to return
  * @return result - the promise for completion of function (async)
  */
-export const getUserBadges = async (id: string | number): Promise<IExtraLifeBadge[]> => {
-    return new Promise<IExtraLifeBadge[]>((resolve, reject) => {
-        const url = apiPaths.badgeUrl(id);
+export const getUserBadges = async (id: string | number, limit: number = 100, page: number = 1): Promise<IBadgesList> => {
+    return new Promise<IBadgesList>((resolve, reject) => {
+        const url = apiPaths.userBadgesUrl(id, limit, page);
+        const userBadgesJson: any = {};
 
-        fetch(url).then((res) => {
-            try {
-                const result: any = res.json();
-                resolve(result);
-            } catch (e) {
-                reject(e);
-            }
-        });
+        fetch(url)
+            .then(async (res) => {
+                try {
+                    userBadgesJson.countBadges = parseInt(res.headers.get('num-records'), 10) || 0;
+                    userBadgesJson.countPages = Math.ceil(userBadgesJson.countBadges / limit);
+                    userBadgesJson.badges = await res.json();
+                    resolve(userBadgesJson);
+                } catch (e) {
+                    reject(e);
+                }
+            })
+            .catch(() => {
+                console.log('Error parsing userBadges URL');
+                reject('There was an error trying to make your request');
+            });
     });
 };
 
@@ -193,7 +223,7 @@ export const getTeamDonations = async (id: string | number, limit: number = 100,
         fetch(url)
             .then(async (res) => {
                 try {
-                    teamDonationsJson.countDonations = res.headers.get('num-records') || 0;
+                    teamDonationsJson.countDonations = parseInt(res.headers.get('num-records'), 10) || 0;
                     teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / limit);
                     teamDonationsJson.donations = await res.json();
                 } catch (e) {
@@ -224,7 +254,7 @@ export const getTeamRoster = async (id: string | number, page?: number): Promise
         fetch(url)
             .then(async (res) => {
                 try {
-                    teamRosterJson.countMembers = res.headers.get('num-records') || 0;
+                    teamRosterJson.countMembers = parseInt(res.headers.get('num-records'), 10) || 0;
                     teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
                     try {
                         teamRosterJson.members = await res.json();
