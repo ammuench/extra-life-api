@@ -31,24 +31,29 @@ export interface IExtraLifeMilestone {
     };
     milestoneID: string;
     isActive: boolean;
+    isComplete?: boolean;
+    endDateUTC?: string;
+    startDateUTC?: string;
 }
 export interface IExtraLifeIncentive {
     amount: number;
     description: string;
-    incentiveImageURL: string;
-    quantity: number;
-    quantityClaimed: number;
+    incentiveImageURL?: string;
+    quantity?: number;
+    quantityClaimed?: number;
     links?: {
         donate: string;
     };
     incentiveID: string;
     isActive: boolean;
+    startDateUTC?: string;
+    endDateUTC?: string;
 }
 export interface IExtraLifeBadge {
     description: string;
     isUnlocked: boolean;
     title: string;
-    unlockedDateUTC: string;
+    unlockedDateUTC?: string;
     badgeImageURL: string;
     badgeCode: string;
 }
@@ -99,8 +104,23 @@ export interface IRosterList {
     countPages: number;
     members: IExtraLifeUser[];
 }
+export interface IBadgesList {
+    countBadges: number;
+    countPages: number;
+    badges: IExtraLifeBadge[];
+}
 export interface IDonationsList {
     countDonations: number;
     countPages: number;
     donations: IExtraLifeDonation[];
+}
+export interface IIncentivesList {
+    countIncentives: number;
+    countPages: number;
+    incentives: IExtraLifeIncentive[];
+}
+export interface IMilestonesList {
+    countMilestones: number;
+    countPages: number;
+    milestones: IExtraLifeMilestone[];
 }

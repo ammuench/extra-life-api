@@ -20,14 +20,29 @@ exports.apiPaths = {
     profileUrl(id) {
         return `${DOMAIN_STUB}api/participants/${id}`;
     },
-    milestoneUrl(id) {
-        return `${DOMAIN_STUB}api/participants/${id}/milestones`;
+    userIncentivesUrl(id, limit = 100, page = 1) {
+        if (!limit) {
+            return `${DOMAIN_STUB}api/participants/${id}/incentives`;
+        }
+        else {
+            return `${DOMAIN_STUB}api/participants/${id}/incentives?limit=${limit}&offset=${pageOffset(limit, page)}`;
+        }
     },
-    incentiveUrl(id) {
-        return `${DOMAIN_STUB}api/participants/${id}/incentives`;
+    userBadgesUrl(id, limit = 100, page = 1) {
+        if (!limit) {
+            return `${DOMAIN_STUB}api/participants/${id}/badges`;
+        }
+        else {
+            return `${DOMAIN_STUB}api/participants/${id}/badges?limit=${limit}&offset=${pageOffset(limit, page)}`;
+        }
     },
-    badgeUrl(id) {
-        return `${DOMAIN_STUB}api/participants/${id}/badges`;
+    userMilestonesUrl(id, limit = 100, page = 1) {
+        if (!limit) {
+            return `${DOMAIN_STUB}api/participants/${id}/milestones`;
+        }
+        else {
+            return `${DOMAIN_STUB}api/participants/${id}/milestones?limit=${limit}&offset=${pageOffset(limit, page)}`;
+        }
     },
     teamDonationsUrl(id, limit = 100, page = 1) {
         if (!limit) {

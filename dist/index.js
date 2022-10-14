@@ -52,7 +52,7 @@ exports.getUserDonations = (id, limit = 100, page = 1) => __awaiter(void 0, void
         node_fetch_1.default(url)
             .then((res) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                userDonationsJson.countDonations = res.headers.get('num-records') || 0;
+                userDonationsJson.countDonations = parseInt(res.headers.get('num-records'), 10) || 0;
                 userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / limit);
                 userDonationsJson.donations = yield res.json();
                 resolve(userDonationsJson);
@@ -67,45 +67,69 @@ exports.getUserDonations = (id, limit = 100, page = 1) => __awaiter(void 0, void
         });
     });
 });
-exports.getUserMilestones = (id) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getUserMilestones = (id, limit = 100, page = 1) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
-        const url = api_paths_1.apiPaths.milestoneUrl(id);
-        node_fetch_1.default(url).then((res) => {
+        const url = api_paths_1.apiPaths.userMilestonesUrl(id, limit, page);
+        const userMilestonesJson = {};
+        node_fetch_1.default(url)
+            .then((res) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                const result = res.json();
-                resolve(result);
+                userMilestonesJson.countMilestones = parseInt(res.headers.get('num-records'), 10) || 0;
+                userMilestonesJson.countPages = Math.ceil(userMilestonesJson.countMilestones / limit);
+                userMilestonesJson.milestones = yield res.json();
+                resolve(userMilestonesJson);
             }
             catch (e) {
                 reject(e);
             }
+        }))
+            .catch(() => {
+            console.log('Error parsing userMilestones URL');
+            reject('There was an error trying to make your request');
         });
     });
 });
-exports.getUserIncentives = (id) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getUserIncentives = (id, limit = 100, page = 1) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
-        const url = api_paths_1.apiPaths.incentiveUrl(id);
-        node_fetch_1.default(url).then((res) => {
+        const url = api_paths_1.apiPaths.userIncentivesUrl(id, limit, page);
+        const userIncentivesJson = {};
+        node_fetch_1.default(url)
+            .then((res) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                const result = res.json();
-                resolve(result);
+                userIncentivesJson.countIncentives = parseInt(res.headers.get('num-records'), 10) || 0;
+                userIncentivesJson.countPages = Math.ceil(userIncentivesJson.countIncentives / limit);
+                userIncentivesJson.incentives = yield res.json();
+                resolve(userIncentivesJson);
             }
             catch (e) {
                 reject(e);
             }
+        }))
+            .catch(() => {
+            console.log('Error parsing userIncentives URL');
+            reject('There was an error trying to make your request');
         });
     });
 });
-exports.getUserBadges = (id) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getUserBadges = (id, limit = 100, page = 1) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
-        const url = api_paths_1.apiPaths.badgeUrl(id);
-        node_fetch_1.default(url).then((res) => {
+        const url = api_paths_1.apiPaths.userBadgesUrl(id, limit, page);
+        const userBadgesJson = {};
+        node_fetch_1.default(url)
+            .then((res) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                const result = res.json();
-                resolve(result);
+                userBadgesJson.countBadges = parseInt(res.headers.get('num-records'), 10) || 0;
+                userBadgesJson.countPages = Math.ceil(userBadgesJson.countBadges / limit);
+                userBadgesJson.badges = yield res.json();
+                resolve(userBadgesJson);
             }
             catch (e) {
                 reject(e);
             }
+        }))
+            .catch(() => {
+            console.log('Error parsing userBadges URL');
+            reject('There was an error trying to make your request');
         });
     });
 });
@@ -151,7 +175,7 @@ exports.getTeamDonations = (id, limit = 100, page = 1) => __awaiter(void 0, void
         node_fetch_1.default(url)
             .then((res) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                teamDonationsJson.countDonations = res.headers.get('num-records') || 0;
+                teamDonationsJson.countDonations = parseInt(res.headers.get('num-records'), 10) || 0;
                 teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / limit);
                 teamDonationsJson.donations = yield res.json();
             }
@@ -174,7 +198,7 @@ exports.getTeamRoster = (id, page) => __awaiter(void 0, void 0, void 0, function
         node_fetch_1.default(url)
             .then((res) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                teamRosterJson.countMembers = res.headers.get('num-records') || 0;
+                teamRosterJson.countMembers = parseInt(res.headers.get('num-records'), 10) || 0;
                 teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
                 try {
                     teamRosterJson.members = yield res.json();

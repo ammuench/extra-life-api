@@ -1,38 +1,61 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("./index");
-index_1.getUserDonations(484672)
+const demoUser = 484672;
+const demoTeam = 60878;
+index_1.getUserInfo(demoUser)
     .then((data) => {
-        console.log(data);
-    })
+    console.log(data);
+})
     .catch((err) => {
-        console.log(err);
-    });
-index_1.getTeamInfo(60878, false)
+    console.error(err);
+});
+index_1.getUserDonations(demoUser)
     .then((data) => {
-        console.log(data);
-    })
-    .catch((e) => {
-        console.log(e);
-    });
-index_1.getTeamDonations(60878, 50)
-    .then((data) => {
-        console.log(data);
-    })
-    .catch((e) => {
-        console.log(e);
-    });
-index_1.getUserInfo(484672)
-    .then((data) => {
-        console.log(data);
-    })
+    console.log(data);
+})
     .catch((err) => {
-        console.log(err);
-    });
-index_1.getTeamRoster(60878)
+    console.error(err);
+});
+index_1.getUserMilestones(demoUser)
     .then((data) => {
-        console.log(data.members[0]?.links);
-    })
+    console.log(data);
+})
     .catch((err) => {
-        console.log(err);
-    });
+    console.error(err);
+});
+index_1.getUserIncentives(demoUser)
+    .then((data) => {
+    console.log(data);
+})
+    .catch((err) => {
+    console.error(err);
+});
+index_1.getUserBadges(demoUser)
+    .then((data) => {
+    console.log(data);
+})
+    .catch((err) => {
+    console.error(err);
+});
+index_1.getTeamInfo(demoTeam, false)
+    .then((data) => {
+    console.log(data);
+})
+    .catch((err) => {
+    console.error(err);
+});
+index_1.getTeamDonations(demoTeam, 50)
+    .then((data) => {
+    console.log(data);
+})
+    .catch((err) => {
+    console.error(err);
+});
+index_1.getTeamRoster(demoTeam)
+    .then((data) => {
+    console.log(data);
+})
+    .catch((err) => {
+    console.error(err);
+});
