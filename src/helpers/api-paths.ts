@@ -20,6 +20,15 @@ export const apiPaths = {
     profileUrl(id: number | string): string {
         return `${DOMAIN_STUB}api/participants/${id}`;
     },
+    milestoneUrl(id: number | string): string {
+        return `${DOMAIN_STUB}api/participants/${id}/milestones`;
+    },
+    incentiveUrl(id: number | string): string {
+        return `${DOMAIN_STUB}api/participants/${id}/incentives`;
+    },
+    badgeUrl(id: number | string): string {
+        return `${DOMAIN_STUB}api/participants/${id}/badges`;
+    },
 
     teamDonationsUrl(id: number | string, limit: number = 100, page: number = 1): string {
         if (!limit) {
