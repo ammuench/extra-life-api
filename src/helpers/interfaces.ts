@@ -28,10 +28,13 @@ export interface IExtraLifeMilestone {
     fundraisingGoal: number;
     description: string;
     links?: {
-      donate: string;
+        donate: string;
     };
     milestoneID: string;
     isActive: boolean;
+    isComplete?: boolean;
+    endDateUTC?: string;
+    startDateUTC?: string;
 }
 
 export interface IExtraLifeIncentive {
@@ -110,4 +113,10 @@ export interface IDonationsList {
     countDonations: number;
     countPages: number;
     donations: IExtraLifeDonation[];
+}
+
+export interface IMilestonesList {
+    countMilestones: number;
+    countPages: number;
+    donations: IExtraLifeMilestone[];
 }

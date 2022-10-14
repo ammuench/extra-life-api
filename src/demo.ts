@@ -1,42 +1,52 @@
-import { getTeamInfo, getUserDonations, getTeamDonations, getUserInfo, getTeamRoster } from './index';
+import { getTeamInfo, getUserMilestones, getUserDonations, getTeamDonations, getUserInfo, getTeamRoster } from './index';
 
-getUserDonations(362008)
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((err) => {
-    console.log(err);
-  })
+const demoUser = 480323;
+const demoTeam = 60878;
 
-getTeamInfo(44504, false)
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((e) => {
-    console.log(e);
-  });
+// getUserInfo(demoUser)
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   })
 
-getTeamDonations(44504, 50)
-  .then((data) => {
-    console.log(data);
-    // console.log(data.recentDonations.length);
-  })
-  .catch((e) => {
-    console.log(e);
-  });
+// getUserDonations(demoUser)
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   })
 
-getUserInfo(362008)
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((err) => {
-    console.log(err);
-  })
+// getUserMilestones(demoUser)
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   })
 
-getTeamRoster(44504)
-  .then((data) => {
-    console.log(data.members[0].links);
-  })
-  .catch((err) => {
-    console.log(err);
-  })
+// getTeamInfo(demoTeam, false)
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   });
+
+// getTeamDonations(demoTeam, 50)
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   });
+
+// getTeamRoster(demoTeam)
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   })

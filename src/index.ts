@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
 import { apiPaths } from './helpers/api-paths';
-import { IDonationsList, IExtraLifeBadge, IExtraLifeIncentive, IExtraLifeMilestone, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
+import { IDonationsList, IExtraLifeBadge, IExtraLifeIncentive, IExtraLifeTeam, IExtraLifeUser, IMilestonesList, IRosterList } from './helpers/interfaces';
 
 export { IDonationsList, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
 
@@ -78,22 +78,32 @@ export const getUserDonations = async (id: string | number, limit: number = 100,
 /**
  * Gets a list of a user's milestones
  * @param id - the user participant ID
+ * @param limit - limit of amount results shown at once.  defaults to 100
+ * @param page - the page number to return
  * @return result - the promise for completion of function (async)
  */
-export const getUserMilestones = async (id: string | number): Promise<IExtraLifeMilestone[]> => {
-    return new Promise<IExtraLifeMilestone[]>((resolve, reject) => {
-        const url = apiPaths.milestoneUrl(id);
+export const getUserMilestones = async (id: string | number, limit: number = 100, page: number = 1): Promise<IMilestonesList> => {
+    return new Promise<IMilestonesList>((resolve, reject) => {
+        const url = apiPaths.userMilestonesUrl(id, limit, page);
+        const userMilestonesJson: any = {};
 
-        fetch(url).then((res) => {
-            try {
-                const result: any = res.json();
-                resolve(result);
-            } catch (e) {
-                reject(e);
-            }
+        fetch(url)
+            .then(async (res) => {
+                try {
+                    userMilestonesJson.countMilestones = res.headers.get('num-records') || 0;
+                    userMilestonesJson.countPages = Math.ceil(userMilestonesJson.countMilestones / limit);
+                    userMilestonesJson.milestones = await res.json();
+                    resolve(userMilestonesJson);
+                } catch (e) {
+                    reject(e);
+                }
+            })
+            .catch(() => {
+                console.log('Error parsing userMilestones URL');
+                reject('There was an error trying to make your request');
+            });
         });
-    });
-};
+    };
 
 /**
  * Gets a list of a user's incentives

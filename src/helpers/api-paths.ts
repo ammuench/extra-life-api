@@ -30,6 +30,14 @@ export const apiPaths = {
         return `${DOMAIN_STUB}api/participants/${id}/badges`;
     },
 
+    userMilestonesUrl(id: number | string, limit: number = 100, page: number = 1): string {
+        if (!limit) {
+            return `${DOMAIN_STUB}api/participants/${id}/milestones`;
+        } else {
+            return `${DOMAIN_STUB}api/participants/${id}/milestones?limit=${limit}&offset=${pageOffset(limit, page)}`;
+        }
+    },
+
     teamDonationsUrl(id: number | string, limit: number = 100, page: number = 1): string {
         if (!limit) {
             return `${DOMAIN_STUB}api/teams/${id}/donations`;
