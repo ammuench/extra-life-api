@@ -20,15 +20,20 @@ export const apiPaths = {
     profileUrl(id: number | string): string {
         return `${DOMAIN_STUB}api/participants/${id}`;
     },
-    badgeUrl(id: number | string): string {
-        return `${DOMAIN_STUB}api/participants/${id}/badges`;
-    },
 
     userIncentivesUrl(id: number | string, limit: number = 100, page: number = 1): string {
         if (!limit) {
             return `${DOMAIN_STUB}api/participants/${id}/incentives`;
         } else {
             return `${DOMAIN_STUB}api/participants/${id}/incentives?limit=${limit}&offset=${pageOffset(limit, page)}`;
+        }
+    },
+
+    userBadgesUrl(id: number | string, limit: number = 100, page: number = 1): string {
+        if (!limit) {
+            return `${DOMAIN_STUB}api/participants/${id}/badges`;
+        } else {
+            return `${DOMAIN_STUB}api/participants/${id}/badges?limit=${limit}&offset=${pageOffset(limit, page)}`;
         }
     },
 

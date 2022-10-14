@@ -56,7 +56,7 @@ export interface IExtraLifeBadge {
     description: string;
     isUnlocked: boolean;
     title: string;
-    unlockedDateUTC: string;
+    unlockedDateUTC?: string;
     badgeImageURL: string;
     badgeCode: string;
 }
@@ -109,6 +109,12 @@ export interface IRosterList {
     countMembers: number;
     countPages: number;
     members: IExtraLifeUser[];
+}
+
+export interface IBadgesList {
+    countBadges: number;
+    countPages: number;
+    badges: IExtraLifeBadge[];
 }
 
 export interface IDonationsList {
