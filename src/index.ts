@@ -60,7 +60,7 @@ export const getUserDonations = async (id: string | number, limit: number = 100,
         fetch(url)
             .then(async (res) => {
                 try {
-                    userDonationsJson.countDonations = res.headers.get('num-records') || 0;
+                    userDonationsJson.countDonations = parseInt(res.headers.get('num-records'), 10) || 0;
                     userDonationsJson.countPages = Math.ceil(userDonationsJson.countDonations / limit);
                     userDonationsJson.donations = await res.json();
                     resolve(userDonationsJson);
@@ -90,7 +90,7 @@ export const getUserMilestones = async (id: string | number, limit: number = 100
         fetch(url)
             .then(async (res) => {
                 try {
-                    userMilestonesJson.countMilestones = res.headers.get('num-records') || 0;
+                    userMilestonesJson.countMilestones = parseInt(res.headers.get('num-records'), 10) || 0;
                     userMilestonesJson.countPages = Math.ceil(userMilestonesJson.countMilestones / limit);
                     userMilestonesJson.milestones = await res.json();
                     resolve(userMilestonesJson);
@@ -120,7 +120,7 @@ export const getUserIncentives = async (id: string | number, limit: number = 100
         fetch(url)
             .then(async (res) => {
                 try {
-                    userIncentivesJson.countIncentives = res.headers.get('num-records') || 0;
+                    userIncentivesJson.countIncentives = parseInt(res.headers.get('num-records'), 10) || 0;
                     userIncentivesJson.countPages = Math.ceil(userIncentivesJson.countIncentives / limit);
                     userIncentivesJson.incentives = await res.json();
                     resolve(userIncentivesJson);
@@ -150,7 +150,7 @@ export const getUserBadges = async (id: string | number, limit: number = 100, pa
         fetch(url)
             .then(async (res) => {
                 try {
-                    userBadgesJson.countBadges = res.headers.get('num-records') || 0;
+                    userBadgesJson.countBadges = parseInt(res.headers.get('num-records'), 10) || 0;
                     userBadgesJson.countPages = Math.ceil(userBadgesJson.countBadges / limit);
                     userBadgesJson.badges = await res.json();
                     resolve(userBadgesJson);
@@ -223,7 +223,7 @@ export const getTeamDonations = async (id: string | number, limit: number = 100,
         fetch(url)
             .then(async (res) => {
                 try {
-                    teamDonationsJson.countDonations = res.headers.get('num-records') || 0;
+                    teamDonationsJson.countDonations = parseInt(res.headers.get('num-records'), 10) || 0;
                     teamDonationsJson.countPages = Math.ceil(teamDonationsJson.countDonations / limit);
                     teamDonationsJson.donations = await res.json();
                 } catch (e) {
@@ -254,7 +254,7 @@ export const getTeamRoster = async (id: string | number, page?: number): Promise
         fetch(url)
             .then(async (res) => {
                 try {
-                    teamRosterJson.countMembers = res.headers.get('num-records') || 0;
+                    teamRosterJson.countMembers = parseInt(res.headers.get('num-records'), 10) || 0;
                     teamRosterJson.countPages = Math.ceil(teamRosterJson.countMembers / 100);
                     try {
                         teamRosterJson.members = await res.json();

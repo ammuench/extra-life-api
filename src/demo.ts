@@ -34,7 +34,6 @@ const demoTeam = 60878;
 //   .catch((err) => {
 //     console.error(err);
 //   })
-//   })
 
 // getUserBadges(demoUser)
 //   .then((data) => {
