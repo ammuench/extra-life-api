@@ -40,14 +40,16 @@ export interface IExtraLifeMilestone {
 export interface IExtraLifeIncentive {
     amount: number;
     description: string;
-    incentiveImageURL: string;
-    quantity: number;
-    quantityClaimed: number;
+    incentiveImageURL?: string;
+    quantity?: number;
+    quantityClaimed?: number;
     links?: {
         donate: string;
     };
     incentiveID: string;
     isActive: boolean;
+    startDateUTC?: string;
+    endDateUTC?: string;
 }
 
 export interface IExtraLifeBadge {
@@ -115,8 +117,14 @@ export interface IDonationsList {
     donations: IExtraLifeDonation[];
 }
 
+export interface IIncentivesList {
+    countIncentives: number;
+    countPages: number;
+    incentives: IExtraLifeIncentive[];
+}
+
 export interface IMilestonesList {
     countMilestones: number;
     countPages: number;
-    donations: IExtraLifeMilestone[];
+    milestones: IExtraLifeMilestone[];
 }

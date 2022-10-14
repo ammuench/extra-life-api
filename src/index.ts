@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
 import { apiPaths } from './helpers/api-paths';
-import { IDonationsList, IExtraLifeBadge, IExtraLifeIncentive, IExtraLifeTeam, IExtraLifeUser, IMilestonesList, IRosterList } from './helpers/interfaces';
+import { IDonationsList, IExtraLifeBadge, IExtraLifeTeam, IExtraLifeUser, IIncentivesList, IMilestonesList, IRosterList } from './helpers/interfaces';
 
 export { IDonationsList, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './helpers/interfaces';
 
@@ -108,20 +108,30 @@ export const getUserMilestones = async (id: string | number, limit: number = 100
 /**
  * Gets a list of a user's incentives
  * @param id - the user participant ID
+ * @param limit - limit of amount results shown at once.  defaults to 100
+ * @param page - the page number to return
  * @return result - the promise for completion of function (async)
  */
-export const getUserIncentives = async (id: string | number): Promise<IExtraLifeIncentive[]> => {
-    return new Promise<IExtraLifeIncentive[]>((resolve, reject) => {
-        const url = apiPaths.incentiveUrl(id);
+export const getUserIncentives = async (id: string | number, limit: number = 100, page: number = 1): Promise<IIncentivesList> => {
+    return new Promise<IIncentivesList>((resolve, reject) => {
+        const url = apiPaths.userIncentivesUrl(id, limit, page);
+        const userIncentivesJson: any = {};
 
-        fetch(url).then((res) => {
-            try {
-                const result: any = res.json();
-                resolve(result);
-            } catch (e) {
-                reject(e);
-            }
-        });
+        fetch(url)
+            .then(async (res) => {
+                try {
+                    userIncentivesJson.countIncentives = res.headers.get('num-records') || 0;
+                    userIncentivesJson.countPages = Math.ceil(userIncentivesJson.countIncentives / limit);
+                    userIncentivesJson.incentives = await res.json();
+                    resolve(userIncentivesJson);
+                } catch (e) {
+                    reject(e);
+                }
+            })
+            .catch(() => {
+                console.log('Error parsing userIncentives URL');
+                reject('There was an error trying to make your request');
+            });
     });
 };
 
