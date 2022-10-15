@@ -22,6 +22,8 @@ export interface IExtraLifeUser {
     numIncentives: number;
     isCustomAvatarImage: boolean;
     URL: string;
+    cacheTag: string;
+    lastModifiedUTC: string;
 }
 
 export interface IExtraLifeMilestone {
