@@ -8,40 +8,40 @@ export { IDonationsList, IExtraLifeTeam, IExtraLifeUser, IRosterList } from './h
 /**
  * Gets the extra life info of a user
  * @param id - the user participant ID
- * @param team - whether to return team info or not
+ * @param cacheTag - an optional cache identifier to fail if not changed
  * @return result - the promise for completion of function (async)
  */
-export const getUserInfo = async (id: string | number): Promise<IExtraLifeUser> => {
+export const getUserInfo = async (id: string | number, cacheTag: string = ''): Promise<IExtraLifeUser> => {
     return new Promise<IExtraLifeUser>((resolve, reject) => {
         const url = apiPaths.profileUrl(id as number);
         let userInfoJson: any = {};
 
-        fetch(url)
-            .then((res) => {
-                try {
-                    userInfoJson = res.json();
-                    userInfoJson.avatarImageURL = 'https:' + userInfoJson.avatarImageURL;
-                    userInfoJson.donateURL = `https://www.extra-life.org/index.cfm?fuseaction=donate.participant&participantID=${id}`;
+        fetch(url, {
+            headers: {
+                'If-None-Match': `"${cacheTag}"`,
+            },
+            redirect: 'error',
+        }).then(async (res) => {
+            // Reject calls on non-ok messages (like 304, cache hit)
+            if (!res.ok) {
+                return reject(res.statusText);
+            }
 
-                    if (userInfoJson.teamID) {
-                        getTeamInfo(userInfoJson.teamID, false)
-                            .then((data: any) => {
-                                userInfoJson.teamURL = data.teamURL;
-                                resolve(userInfoJson);
-                            }).catch((reason) => {
-                                reject(reason);
-                            });
-                    } else {
-                        resolve(userInfoJson);
-                    }
-                } catch (e) {
-                    reject(e);
-                }
-            })
-            .catch(() => {
-                console.log('Error parsing userInfo URL');
-                reject('There was an error trying to make your request');
-            });
+            try {
+                userInfoJson = await res.json();
+                // Removing the "weak" flag and quotation marks so the identifier is clear
+                userInfoJson.cacheTag = res.headers.get('etag').replace('W/"', '').replace('"', '');
+                userInfoJson.lastModifiedUTC = (new Date(res.headers.get('last-modified'))).toISOString();
+
+                return resolve(userInfoJson);
+            } catch (e) {
+                reject(e);
+            }
+        })
+        .catch(() => {
+            console.log('Error parsing userInfo URL');
+            reject('There was an error trying to make your request');
+        });
     });
 };
 

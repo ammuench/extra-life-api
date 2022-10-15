@@ -6,6 +6,10 @@ const demoTeam = 60878;
 getUserInfo(demoUser)
   .then((data) => {
     console.log(data);
+    return getUserInfo(demoUser, data.cacheTag);
+  })
+  .then((data) => {
+    console.log(data);
   })
   .catch((err) => {
     console.error(err);
